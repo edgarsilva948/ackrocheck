@@ -34,6 +34,9 @@ jobs:
         uses: codecov/codecov-action@v7
         with:
           files: coverage.out
+          # Without this, codecov's auto-search also picks up
+          # testdata/golden/report.xml (a JUnit fixture) as "coverage".
+          disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: false
       - name: Upload coverage artifact
