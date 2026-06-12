@@ -1,0 +1,63 @@
+# Fails ACKRO_AWS_SQS_001 (no encryption) and 002 (public policy).
+apiVersion: sqs.services.k8s.aws/v1alpha1
+kind: Queue
+metadata:
+  name: open-queue
+  namespace: apps
+spec:
+  queueName: open-queue
+  policy: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "sqs:SendMessage",
+          "Resource": "arn:aws:sqs:us-east-1:123456789012:open-queue"
+        }
+      ]
+    }
+---
+# Fails ACKRO_AWS_SNS_001 (no KMS key) and 002 (public policy).
+apiVersion: sns.services.k8s.aws/v1alpha1
+kind: Topic
+metadata:
+  name: open-topic
+  namespace: apps
+spec:
+  name: open-topic
+  policy: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {"AWS": "*"},
+          "Action": "sns:Publish",
+          "Resource": "arn:aws:sns:us-east-1:123456789012:open-topic"
+        }
+      ]
+    }
+---
+# Fails ACKRO_AWS_ECR_001 (no scan on push) and 002 (public policy).
+apiVersion: ecr.services.k8s.aws/v1alpha1
+kind: Repository
+metadata:
+  name: open-repo
+  namespace: apps
+spec:
+  name: open-repo
+  imageScanningConfiguration:
+    scanOnPush: false
+  policy: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "ecr:BatchGetImage"
+        }
+      ]
+    }

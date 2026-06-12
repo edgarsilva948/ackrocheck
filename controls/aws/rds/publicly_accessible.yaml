@@ -1,0 +1,35 @@
+id: ACKRO_AWS_RDS_002
+title: RDS DBInstance should not be publicly accessible
+description: RDS DBInstance resources should not set publiclyAccessible to true.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: rds
+  type: DBInstance
+match:
+  apiGroups:
+    - rds.services.k8s.aws
+  kinds:
+    - DBInstance
+assertions:
+  - path: spec.publiclyAccessible
+    operator: not_equals
+    value: true
+    message: spec.publiclyAccessible is true
+remediation:
+  message: Set spec.publiclyAccessible to false or remove the field.
+  patch:
+    spec:
+      publiclyAccessible: false
+references:
+  - type: aws_security_hub
+    id: RDS.2
+  - type: aws_config
+    id: rds-instance-public-access-check
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  A missing field passes: the safe default is non-public access unless the
+  subnet group is public, which cannot be determined statically.

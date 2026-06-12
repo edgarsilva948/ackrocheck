@@ -1,0 +1,23 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - misspell
+    - revive
+  exclusions:
+    rules:
+      # fmt.Fprintf to an in-memory or already-checked writer in output code.
+      - path: internal/report/
+        linters: [errcheck]
+      - path: internal/cli/
+        linters: [errcheck]
+        text: "Fprintf|Fprintln"
+      - path: _test\.go
+        linters: [errcheck]
+
+formatters:
+  enable:
+    - gofmt

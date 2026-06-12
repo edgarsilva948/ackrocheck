@@ -1,0 +1,102 @@
+id: ACKRO_AWS_EC2_003
+title: Security group should not allow database ports from 0.0.0.0/0
+description: >-
+  EC2 SecurityGroup ingress rules should not allow 0.0.0.0/0 on database ports
+  3306 (MySQL), 5432 (PostgreSQL), 1433 (SQL Server), 1521 (Oracle),
+  6379 (Redis), or 9200 (Elasticsearch).
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: ec2
+  type: SecurityGroup
+match:
+  apiGroups:
+    - ec2.services.k8s.aws
+  kinds:
+    - SecurityGroup
+assertions:
+  - path: spec.ingressRules
+    operator: all
+    message: an ingress rule allows 0.0.0.0/0 to reach a database port
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: ipRanges
+            operator: all
+            assertions:
+              - path: cidrIP
+                operator: not_equals
+                value: "0.0.0.0/0"
+          - path: .
+            operator: all
+            assertions:
+              - path: .
+                operator: any
+                assertions:
+                  - path: fromPort
+                    operator: greater_than
+                    value: 3306
+                  - path: toPort
+                    operator: less_than
+                    value: 3306
+              - path: .
+                operator: any
+                assertions:
+                  - path: fromPort
+                    operator: greater_than
+                    value: 5432
+                  - path: toPort
+                    operator: less_than
+                    value: 5432
+              - path: .
+                operator: any
+                assertions:
+                  - path: fromPort
+                    operator: greater_than
+                    value: 1433
+                  - path: toPort
+                    operator: less_than
+                    value: 1433
+              - path: .
+                operator: any
+                assertions:
+                  - path: fromPort
+                    operator: greater_than
+                    value: 1521
+                  - path: toPort
+                    operator: less_than
+                    value: 1521
+              - path: .
+                operator: any
+                assertions:
+                  - path: fromPort
+                    operator: greater_than
+                    value: 6379
+                  - path: toPort
+                    operator: less_than
+                    value: 6379
+              - path: .
+                operator: any
+                assertions:
+                  - path: fromPort
+                    operator: greater_than
+                    value: 9200
+                  - path: toPort
+                    operator: less_than
+                    value: 9200
+remediation:
+  message: >-
+    Restrict database port ingress to application security groups or specific
+    CIDR ranges.
+references:
+  - type: aws_security_hub
+    id: EC2.19
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  A rule fails when any ipRanges entry is 0.0.0.0/0 and the [fromPort,
+  toPort] range covers any of the listed database ports. Rules without port
+  fields (e.g. ipProtocol -1) fail because they cover all ports.

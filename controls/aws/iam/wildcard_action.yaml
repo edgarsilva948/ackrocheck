@@ -1,0 +1,55 @@
+id: ACKRO_AWS_IAM_001
+title: IAM policy should not allow Action "*"
+description: >-
+  IAM policy documents should not contain Allow statements with Action "*".
+severity: HIGH
+category: IAM
+resource:
+  provider: aws
+  service: iam
+  type: Policy
+match:
+  apiGroups:
+    - iam.services.k8s.aws
+  kinds:
+    - Policy
+    - Role
+    - User
+    - Group
+assertions:
+  - path: __ackrocheck.policyDocuments.policyDocument.Statement
+    operator: all
+    message: spec.policyDocument allows Action "*"
+    assertions: &no_wildcard_action
+      - path: .
+        operator: any
+        assertions:
+          - path: Effect
+            operator: not_equals
+            value: Allow
+          - path: Action
+            operator: not_contains
+            value: "*"
+  - path: __ackrocheck.policyDocuments.document.Statement
+    operator: all
+    message: spec.document allows Action "*"
+    assertions: *no_wildcard_action
+  - path: __ackrocheck.policyDocuments.policy.Statement
+    operator: all
+    message: spec.policy allows Action "*"
+    assertions: *no_wildcard_action
+remediation:
+  message: Replace Action "*" with the specific actions the workload needs.
+references:
+  - type: aws_security_hub
+    id: IAM.1
+  - type: aws_config
+    id: iam-policy-no-statements-with-admin-access
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  Policy documents are read from spec.policyDocument, spec.document and
+  spec.policy, as JSON strings or YAML objects. Fields that are absent or not
+  parseable pass (nothing to verify). Action service wildcards such as
+  "s3:*" are not flagged by this control.

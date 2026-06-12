@@ -1,0 +1,31 @@
+id: ACKRO_AWS_LAMBDA_001
+title: Lambda Function should use a customer-managed KMS key
+description: >-
+  Lambda Function resources should set kmsKeyARN so environment variables are
+  encrypted with a customer-managed key.
+severity: LOW
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: lambda
+  type: Function
+match:
+  apiGroups:
+    - lambda.services.k8s.aws
+  kinds:
+    - Function
+assertions:
+  - path: spec.kmsKeyARN
+    operator: exists
+    message: spec.kmsKeyARN is not set
+remediation:
+  message: Set spec.kmsKeyARN to a customer-managed KMS key ARN.
+references:
+  - type: aws_config
+    id: lambda-function-settings-check
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  Lambda encrypts environment variables with an AWS-managed key by default,
+  so this is LOW severity and enforces customer-managed key usage.

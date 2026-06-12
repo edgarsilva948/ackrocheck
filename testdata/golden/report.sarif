@@ -1,0 +1,109 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "AckroCheck",
+          "informationUri": "https://github.com/edgarsilva948/ackrocheck",
+          "version": "test",
+          "rules": [
+            {
+              "id": "ACKRO_AWS_RDS_001",
+              "name": "AckroAwsRds001",
+              "shortDescription": {
+                "text": "RDS DBInstance should enable storage encryption"
+              },
+              "fullDescription": {
+                "text": "RDS DBInstance should enable storage encryption"
+              },
+              "help": {
+                "text": "Set spec.storageEncrypted to true."
+              },
+              "properties": {
+                "category": "DATA_PROTECTION",
+                "security-severity": "8.0",
+                "severity": "HIGH"
+              }
+            },
+            {
+              "id": "ACKRO_AWS_RDS_003",
+              "name": "AckroAwsRds003",
+              "shortDescription": {
+                "text": "RDS DBInstance should retain backups for at least 7 days"
+              },
+              "fullDescription": {
+                "text": "RDS DBInstance should retain backups for at least 7 days"
+              },
+              "help": {
+                "text": ""
+              },
+              "properties": {
+                "category": "",
+                "security-severity": "5.0",
+                "severity": "MEDIUM"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "ACKRO_AWS_RDS_001",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "rds.services.k8s.aws/v1alpha1 DBInstance \"app-db\": RDS DBInstance resources should explicitly enable encryption at rest. Fix: Set spec.storageEncrypted to true."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "manifests/db.yaml"
+                },
+                "region": {
+                  "startLine": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "ACKRO_AWS_RDS_001",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "rds.services.k8s.aws/v1alpha1 DBInstance \"other-db\": RDS DBInstance resources should explicitly enable encryption at rest."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "manifests/windows/db.yaml"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ruleId": "ACKRO_AWS_RDS_003",
+          "ruleIndex": 1,
+          "level": "warning",
+          "message": {
+            "text": " DBInstance \"stack-db\": value is user-controlled (embedded in ResourceGraphDefinition \"db-stack\")"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "manifests/rgd.yaml"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+id: ACKRO_AWS_EC2_001
+title: Security group should not allow SSH from 0.0.0.0/0
+description: >-
+  EC2 SecurityGroup ingress rules should not allow 0.0.0.0/0 on port 22.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: ec2
+  type: SecurityGroup
+match:
+  apiGroups:
+    - ec2.services.k8s.aws
+  kinds:
+    - SecurityGroup
+assertions:
+  - path: spec.ingressRules
+    operator: all
+    message: an ingress rule allows 0.0.0.0/0 to reach port 22
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: ipRanges
+            operator: all
+            assertions:
+              - path: cidrIP
+                operator: not_equals
+                value: "0.0.0.0/0"
+          - path: fromPort
+            operator: greater_than
+            value: 22
+          - path: toPort
+            operator: less_than
+            value: 22
+remediation:
+  message: Restrict SSH ingress to specific CIDR ranges or use SSM Session Manager.
+references:
+  - type: aws_security_hub
+    id: EC2.13
+  - type: aws_config
+    id: restricted-ssh
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  A rule is flagged when any ipRanges entry is 0.0.0.0/0 and the port range
+  [fromPort, toPort] covers 22. Rules with ipProtocol -1 and no port range are
+  flagged because they include port 22. The ACK ec2-controller models ingress
+  inline on the SecurityGroup CRD under spec.ingressRules; there is no
+  separate security group rule CRD in ACK.
+---
+id: ACKRO_AWS_EC2_002
+title: Security group should not allow RDP from 0.0.0.0/0
+description: >-
+  EC2 SecurityGroup ingress rules should not allow 0.0.0.0/0 on port 3389.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: ec2
+  type: SecurityGroup
+match:
+  apiGroups:
+    - ec2.services.k8s.aws
+  kinds:
+    - SecurityGroup
+assertions:
+  - path: spec.ingressRules
+    operator: all
+    message: an ingress rule allows 0.0.0.0/0 to reach port 3389
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: ipRanges
+            operator: all
+            assertions:
+              - path: cidrIP
+                operator: not_equals
+                value: "0.0.0.0/0"
+          - path: fromPort
+            operator: greater_than
+            value: 3389
+          - path: toPort
+            operator: less_than
+            value: 3389
+remediation:
+  message: Restrict RDP ingress to specific CIDR ranges or use a bastion/VPN.
+references:
+  - type: aws_security_hub
+    id: EC2.14
+  - type: aws_config
+    id: restricted-rdp
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+---
+id: ACKRO_AWS_EC2_004
+title: Security group should not allow SSH from ::/0
+description: >-
+  EC2 SecurityGroup ingress rules should not allow the IPv6 wildcard ::/0 on
+  port 22.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: ec2
+  type: SecurityGroup
+match:
+  apiGroups:
+    - ec2.services.k8s.aws
+  kinds:
+    - SecurityGroup
+assertions:
+  - path: spec.ingressRules
+    operator: all
+    message: an ingress rule allows ::/0 to reach port 22
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: ipv6Ranges
+            operator: all
+            assertions:
+              - path: cidrIPv6
+                operator: not_equals
+                value: "::/0"
+          - path: fromPort
+            operator: greater_than
+            value: 22
+          - path: toPort
+            operator: less_than
+            value: 22
+remediation:
+  message: Restrict SSH ingress to specific IPv6 ranges or use SSM Session Manager.
+references:
+  - type: aws_security_hub
+    id: EC2.13
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+---
+id: ACKRO_AWS_EC2_005
+title: Security group should not allow RDP from ::/0
+description: >-
+  EC2 SecurityGroup ingress rules should not allow the IPv6 wildcard ::/0 on
+  port 3389.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: ec2
+  type: SecurityGroup
+match:
+  apiGroups:
+    - ec2.services.k8s.aws
+  kinds:
+    - SecurityGroup
+assertions:
+  - path: spec.ingressRules
+    operator: all
+    message: an ingress rule allows ::/0 to reach port 3389
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: ipv6Ranges
+            operator: all
+            assertions:
+              - path: cidrIPv6
+                operator: not_equals
+                value: "::/0"
+          - path: fromPort
+            operator: greater_than
+            value: 3389
+          - path: toPort
+            operator: less_than
+            value: 3389
+remediation:
+  message: Restrict RDP ingress to specific IPv6 ranges or use a bastion/VPN.
+references:
+  - type: aws_security_hub
+    id: EC2.14
+compatibility:
+  status: stable
+  introducedIn: 0.1.0

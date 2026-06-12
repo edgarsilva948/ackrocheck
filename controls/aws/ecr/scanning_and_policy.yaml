@@ -1,0 +1,81 @@
+id: ACKRO_AWS_ECR_001
+title: ECR Repository should enable image scanning on push
+description: >-
+  ECR Repository resources should set imageScanningConfiguration.scanOnPush to
+  true.
+severity: MEDIUM
+category: VULNERABILITY_MANAGEMENT
+resource:
+  provider: aws
+  service: ecr
+  type: Repository
+match:
+  apiGroups:
+    - ecr.services.k8s.aws
+  kinds:
+    - Repository
+assertions:
+  - path: spec.imageScanningConfiguration.scanOnPush
+    operator: is_true
+    message: spec.imageScanningConfiguration.scanOnPush is missing or not true
+remediation:
+  message: Set spec.imageScanningConfiguration.scanOnPush to true.
+  patch:
+    spec:
+      imageScanningConfiguration:
+        scanOnPush: true
+references:
+  - type: aws_security_hub
+    id: ECR.1
+  - type: aws_config
+    id: ecr-private-image-scanning-enabled
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  Basic scanning configured at the registry level cannot be seen from the
+  manifest; this control only checks what the ACK Repository CRD declares.
+---
+id: ACKRO_AWS_ECR_002
+title: ECR Repository policy should not allow public access
+description: >-
+  ECR Repository policies should not contain Allow statements with a wildcard
+  principal and no condition.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: ecr
+  type: Repository
+match:
+  apiGroups:
+    - ecr.services.k8s.aws
+  kinds:
+    - Repository
+assertions:
+  - path: __ackrocheck.policyDocuments.policy.Statement
+    operator: all
+    message: the repository policy allows access to everyone (Principal "*" without a Condition)
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: Effect
+            operator: not_equals
+            value: Allow
+          - path: Principal.AWS
+            operator: not_contains
+            value: "*"
+          - path: HasCondition
+            operator: is_true
+remediation:
+  message: Restrict the repository policy Principal to specific AWS principals.
+references:
+  - type: aws_config
+    id: ecr-private-repository-no-public-access
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  The ACK ecr-controller models the repository policy as a JSON string under
+  spec.policy on the Repository CRD.

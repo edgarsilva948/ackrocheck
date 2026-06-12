@@ -1,0 +1,14 @@
+# Fails ACKRO_AWS_RDS_001 (no encryption), 002 (public), 003 (retention), 004 (prod, no deletion protection)
+apiVersion: rds.services.k8s.aws/v1alpha1
+kind: DBInstance
+metadata:
+  name: insecure-db
+  namespace: apps
+  labels:
+    environment: prod
+spec:
+  engine: postgres
+  dbInstanceClass: db.t3.medium
+  storageEncrypted: false
+  publiclyAccessible: true
+  backupRetentionPeriod: 1

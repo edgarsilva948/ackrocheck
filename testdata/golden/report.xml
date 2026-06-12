@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="ackrocheck" tests="3" failures="2" errors="1">
+  <testsuite name="manifests/db.yaml" tests="1" failures="1" errors="0">
+    <testcase name="ACKRO_AWS_RDS_001 DBInstance/app-db" classname="ACKRO_AWS_RDS_001">
+      <failure message="[HIGH] RDS DBInstance should enable storage encryption" type="FAILED">Resource: rds.services.k8s.aws/v1alpha1 DBInstance app-db&#xA;File: manifests/db.yaml (document 0)&#xA;Reason: RDS DBInstance resources should explicitly enable encryption at rest.&#xA;Fix: Set spec.storageEncrypted to true.</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="manifests/rgd.yaml" tests="1" failures="1" errors="0">
+    <testcase name="ACKRO_AWS_RDS_002 DBInstance/stack-db" classname="ACKRO_AWS_RDS_002">
+      <failure message="[HIGH] RDS DBInstance should not be publicly accessible" type="FAILED">Resource:  DBInstance stack-db&#xA;File: manifests/rgd.yaml (document 0)&#xA;Reason: publiclyAccessible is true&#xA;Embedded in: ResourceGraphDefinition db-stack</failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="parse-errors" tests="1" failures="0" errors="1">
+    <testcase name="manifests/broken.yaml" classname="ParseError">
+      <error message="yaml: line 3: mapping values are not allowed" type="ParseError">yaml: line 3: mapping values are not allowed</error>
+    </testcase>
+  </testsuite>
+</testsuites>

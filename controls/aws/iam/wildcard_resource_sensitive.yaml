@@ -1,0 +1,161 @@
+id: ACKRO_AWS_IAM_002
+title: IAM policy should not allow Resource "*" with sensitive actions
+description: >-
+  IAM policy documents should not combine Resource "*" with sensitive actions
+  such as full wildcard, iam:*, kms:*, secretsmanager:*, sts:*, s3:* or ec2:*.
+severity: HIGH
+category: IAM
+resource:
+  provider: aws
+  service: iam
+  type: Policy
+match:
+  apiGroups:
+    - iam.services.k8s.aws
+  kinds:
+    - Policy
+    - Role
+    - User
+    - Group
+assertions:
+  - path: __ackrocheck.policyDocuments.policyDocument.Statement
+    operator: all
+    message: spec.policyDocument allows sensitive actions on Resource "*"
+    assertions: &no_sensitive_on_star
+      - path: .
+        operator: any
+        assertions:
+          - path: Effect
+            operator: not_equals
+            value: Allow
+          - path: Resource
+            operator: not_contains
+            value: "*"
+          - path: Action
+            operator: all
+            assertions:
+              - path: .
+                operator: not_match_regex
+                value: '^(\*|iam:.*|kms:.*|secretsmanager:.*|sts:.*|s3:\*|ec2:\*)$'
+  - path: __ackrocheck.policyDocuments.document.Statement
+    operator: all
+    message: spec.document allows sensitive actions on Resource "*"
+    assertions: *no_sensitive_on_star
+  - path: __ackrocheck.policyDocuments.policy.Statement
+    operator: all
+    message: spec.policy allows sensitive actions on Resource "*"
+    assertions: *no_sensitive_on_star
+remediation:
+  message: >-
+    Scope the Resource of sensitive actions to specific ARNs instead of "*".
+references:
+  - type: aws_security_hub
+    id: IAM.1
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  "Sensitive" for the MVP means the full wildcard, any iam/kms/
+  secretsmanager/sts action, or the s3/ec2 service wildcards. The list is
+  intentionally conservative; extend it with an external control if needed.
+---
+id: ACKRO_AWS_IAM_003
+title: IAM trust policy should not allow a wildcard principal
+description: >-
+  IAM Role trust policies (assumeRolePolicyDocument) should not contain Allow
+  statements with Principal "*".
+severity: CRITICAL
+category: IAM
+resource:
+  provider: aws
+  service: iam
+  type: Role
+match:
+  apiGroups:
+    - iam.services.k8s.aws
+  kinds:
+    - Role
+assertions:
+  - path: __ackrocheck.policyDocuments.assumeRolePolicyDocument.Statement
+    operator: all
+    message: the trust policy allows any AWS principal to assume the role
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: Effect
+            operator: not_equals
+            value: Allow
+          - path: Principal.AWS
+            operator: not_contains
+            value: "*"
+remediation:
+  message: >-
+    Restrict the trust policy Principal to specific AWS accounts, roles, or
+    services.
+references:
+  - type: aws_config
+    id: iam-role-managed-policy-check
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  Principal "*" and Principal {"AWS": "*"} are both detected; the parser
+  canonicalizes them. Conditions are not considered safe enough to exempt a
+  wildcard trust principal, so statements with conditions still fail.
+---
+id: ACKRO_AWS_IAM_004
+title: IAM policy should not allow iam:PassRole on Resource "*"
+description: >-
+  IAM policy documents should not allow iam:PassRole on all resources, which
+  enables privilege escalation.
+severity: HIGH
+category: IAM
+resource:
+  provider: aws
+  service: iam
+  type: Policy
+match:
+  apiGroups:
+    - iam.services.k8s.aws
+  kinds:
+    - Policy
+    - Role
+    - User
+    - Group
+assertions:
+  - path: __ackrocheck.policyDocuments.policyDocument.Statement
+    operator: all
+    message: spec.policyDocument allows iam:PassRole on Resource "*"
+    assertions: &no_passrole_on_star
+      - path: .
+        operator: any
+        assertions:
+          - path: Effect
+            operator: not_equals
+            value: Allow
+          - path: Resource
+            operator: not_contains
+            value: "*"
+          - path: Action
+            operator: all
+            assertions:
+              - path: .
+                operator: not_match_regex
+                value: '^(\*|iam:\*|iam:PassRole)$'
+  - path: __ackrocheck.policyDocuments.document.Statement
+    operator: all
+    message: spec.document allows iam:PassRole on Resource "*"
+    assertions: *no_passrole_on_star
+  - path: __ackrocheck.policyDocuments.policy.Statement
+    operator: all
+    message: spec.policy allows iam:PassRole on Resource "*"
+    assertions: *no_passrole_on_star
+remediation:
+  message: Scope iam:PassRole to the specific role ARNs the workload may pass.
+references:
+  - type: aws_security_hub
+    id: IAM.21
+compatibility:
+  status: stable
+  introducedIn: 0.1.0

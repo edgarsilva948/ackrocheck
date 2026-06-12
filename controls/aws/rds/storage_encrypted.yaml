@@ -1,0 +1,34 @@
+id: ACKRO_AWS_RDS_001
+title: RDS DBInstance should enable storage encryption
+description: RDS DBInstance resources should explicitly enable encryption at rest.
+severity: HIGH
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: rds
+  type: DBInstance
+match:
+  apiGroups:
+    - rds.services.k8s.aws
+  kinds:
+    - DBInstance
+assertions:
+  - path: spec.storageEncrypted
+    operator: is_true
+    message: spec.storageEncrypted is missing or not true
+remediation:
+  message: Set spec.storageEncrypted to true.
+  patch:
+    spec:
+      storageEncrypted: true
+references:
+  - type: aws_security_hub
+    id: RDS.3
+  - type: aws_config
+    id: rds-storage-encrypted
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  A missing spec.storageEncrypted field fails this control because the AWS
+  default for most engines is unencrypted storage.

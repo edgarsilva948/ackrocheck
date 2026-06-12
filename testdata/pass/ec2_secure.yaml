@@ -1,0 +1,28 @@
+# Passes all EC2 controls: HTTPS open to the world is fine, SSH is scoped.
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: SecurityGroup
+metadata:
+  name: web-sg
+  namespace: apps
+spec:
+  name: web-sg
+  description: web tier security group
+  vpcID: vpc-12345678
+  ingressRules:
+    - ipProtocol: tcp
+      fromPort: 443
+      toPort: 443
+      ipRanges:
+        - cidrIP: "0.0.0.0/0"
+      ipv6Ranges:
+        - cidrIPv6: "::/0"
+    - ipProtocol: tcp
+      fromPort: 22
+      toPort: 22
+      ipRanges:
+        - cidrIP: "10.0.0.0/8"
+    - ipProtocol: tcp
+      fromPort: 5432
+      toPort: 5432
+      ipRanges:
+        - cidrIP: "10.0.1.0/24"

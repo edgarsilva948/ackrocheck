@@ -1,0 +1,90 @@
+id: ACKRO_AWS_SQS_001
+title: SQS Queue should use KMS encryption
+description: >-
+  SQS Queue resources should set kmsMasterKeyID so messages are encrypted with
+  a customer-managed or AWS-managed KMS key.
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: sqs
+  type: Queue
+match:
+  apiGroups:
+    - sqs.services.k8s.aws
+  kinds:
+    - Queue
+assertions:
+  - path: .
+    operator: any
+    message: neither spec.kmsMasterKeyID nor spec.sqsManagedSSEEnabled is configured
+    assertions:
+      - path: spec.kmsMasterKeyID
+        operator: exists
+      - path: spec.sqsManagedSSEEnabled
+        operator: is_true
+remediation:
+  message: >-
+    Set spec.kmsMasterKeyID to a KMS key (preferred) or set
+    spec.sqsManagedSSEEnabled to true for SQS-managed encryption.
+  patch:
+    spec:
+      kmsMasterKeyID: alias/my-key
+references:
+  - type: aws_security_hub
+    id: SQS.1
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  The ACK sqs-controller exposes kmsMasterKeyID and sqsManagedSSEEnabled on
+  the Queue CRD. Either satisfies encryption at rest; KMS is preferred.
+---
+id: ACKRO_AWS_SQS_002
+title: SQS Queue policy should not allow public access
+description: >-
+  SQS Queue policies should not contain Allow statements with a wildcard
+  principal and no condition.
+severity: CRITICAL
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: sqs
+  type: Queue
+match:
+  apiGroups:
+    - sqs.services.k8s.aws
+  kinds:
+    - Queue
+assertions:
+  - path: __ackrocheck.policyDocuments.policy.Statement
+    operator: all
+    message: the queue policy allows access to everyone (Principal "*" without a Condition)
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: Effect
+            operator: not_equals
+            value: Allow
+          - path: Principal.AWS
+            operator: not_contains
+            value: "*"
+          - path: HasCondition
+            operator: is_true
+remediation:
+  message: >-
+    Restrict the queue policy Principal, or add a Condition (e.g. aws:SourceArn)
+    that limits who can send or receive.
+references:
+  - type: aws_security_hub
+    id: SQS.3
+  - type: aws_config
+    id: sqs-queue-no-public-access
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  The ACK sqs-controller models the access policy as a JSON string under
+  spec.policy. Statements with a Condition pass (commonly aws:SourceArn for
+  SNS-to-SQS fan-out).

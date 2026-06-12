@@ -1,0 +1,33 @@
+id: ACKRO_AWS_RDS_003
+title: RDS DBInstance should retain backups for at least 7 days
+description: RDS DBInstance resources should set backupRetentionPeriod to 7 or more days.
+severity: MEDIUM
+category: RESILIENCE
+resource:
+  provider: aws
+  service: rds
+  type: DBInstance
+match:
+  apiGroups:
+    - rds.services.k8s.aws
+  kinds:
+    - DBInstance
+assertions:
+  - path: spec.backupRetentionPeriod
+    operator: greater_than_or_equal
+    value: 7
+    message: spec.backupRetentionPeriod is missing or below 7 days
+remediation:
+  message: Set spec.backupRetentionPeriod to 7 or more.
+  patch:
+    spec:
+      backupRetentionPeriod: 7
+references:
+  - type: aws_config
+    id: db-instance-backup-enabled
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  A missing field fails this control: the AWS default of 1 day (or 0 via
+  some paths) is below the recommended minimum.

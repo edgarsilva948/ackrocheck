@@ -1,0 +1,21 @@
+# Fails ACKRO_AWS_S3_001..004 (no public access block), 005 (no encryption),
+# and 006 (public bucket policy).
+apiVersion: s3.services.k8s.aws/v1alpha1
+kind: Bucket
+metadata:
+  name: insecure-bucket
+  namespace: apps
+spec:
+  name: insecure-bucket
+  policy: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::insecure-bucket/*"
+        }
+      ]
+    }

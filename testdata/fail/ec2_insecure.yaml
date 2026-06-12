@@ -1,0 +1,24 @@
+# Fails ACKRO_AWS_EC2_001 (SSH from 0.0.0.0/0), 002 (RDP via wide range),
+# 003 (database ports via wide range), 004 (SSH from ::/0).
+apiVersion: ec2.services.k8s.aws/v1alpha1
+kind: SecurityGroup
+metadata:
+  name: open-sg
+  namespace: apps
+spec:
+  name: open-sg
+  description: overly permissive security group
+  vpcID: vpc-12345678
+  ingressRules:
+    - ipProtocol: tcp
+      fromPort: 22
+      toPort: 22
+      ipRanges:
+        - cidrIP: "0.0.0.0/0"
+      ipv6Ranges:
+        - cidrIPv6: "::/0"
+    - ipProtocol: tcp
+      fromPort: 1024
+      toPort: 9999
+      ipRanges:
+        - cidrIP: "0.0.0.0/0"

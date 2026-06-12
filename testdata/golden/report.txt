@@ -1,0 +1,24 @@
+FAILED ACKRO_AWS_RDS_001 HIGH
+Resource: rds.services.k8s.aws/v1alpha1 DBInstance app-db
+File: manifests/db.yaml:2 (document 0)
+Reason: RDS DBInstance resources should explicitly enable encryption at rest.
+Fix: Set spec.storageEncrypted to true.
+
+WARNING ACKRO_AWS_RDS_003 MEDIUM
+Resource: rds.services.k8s.aws/v1alpha1 DBInstance stack-db
+Embedded in: ResourceGraphDefinition db-stack
+File: manifests/rgd.yaml (document 0)
+Reason: value is user-controlled via a templated expression
+Fix: Set spec.backupRetentionPeriod to 7 or more.
+
+PARSE ERROR manifests/broken.yaml: document 0: yaml: mapping values are not allowed in this context
+
+AckroCheck summary:
+  Files scanned: 2
+  Resources scanned: 3
+  Findings: 2
+  Critical: 0
+  High: 1
+  Medium: 1
+  Low: 0
+  Info: 0

@@ -1,0 +1,45 @@
+# Passes SQS controls: KMS key set, policy scoped with a condition.
+apiVersion: sqs.services.k8s.aws/v1alpha1
+kind: Queue
+metadata:
+  name: app-queue
+  namespace: apps
+spec:
+  queueName: app-queue
+  kmsMasterKeyID: alias/app-key
+  policy: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "sqs:SendMessage",
+          "Resource": "arn:aws:sqs:us-east-1:123456789012:app-queue",
+          "Condition": {
+            "ArnEquals": {"aws:SourceArn": "arn:aws:sns:us-east-1:123456789012:app-topic"}
+          }
+        }
+      ]
+    }
+---
+# Passes SNS controls.
+apiVersion: sns.services.k8s.aws/v1alpha1
+kind: Topic
+metadata:
+  name: app-topic
+  namespace: apps
+spec:
+  name: app-topic
+  kmsMasterKeyID: alias/app-key
+---
+# Passes ECR controls.
+apiVersion: ecr.services.k8s.aws/v1alpha1
+kind: Repository
+metadata:
+  name: app-repo
+  namespace: apps
+spec:
+  name: app-repo
+  imageScanningConfiguration:
+    scanOnPush: true

@@ -1,0 +1,26 @@
+# RGD where security-relevant fields are user-controlled via CEL templates.
+# AckroCheck reports these as WARNING: it cannot statically verify them.
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: dynamic-db-stack
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: DBStack
+    spec:
+      name: string
+      encrypted: boolean
+  resources:
+    - id: database
+      template:
+        apiVersion: rds.services.k8s.aws/v1alpha1
+        kind: DBInstance
+        metadata:
+          name: "${schema.spec.name}"
+        spec:
+          engine: postgres
+          dbInstanceClass: db.t3.medium
+          storageEncrypted: "${schema.spec.encrypted}"
+          publiclyAccessible: false
+          backupRetentionPeriod: 14

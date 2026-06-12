@@ -1,0 +1,129 @@
+id: ACKRO_AWS_S3_001
+title: S3 Bucket public access block should block public ACLs
+description: S3 Bucket resources should set publicAccessBlock.blockPublicACLs to true.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: s3
+  type: Bucket
+match:
+  apiGroups:
+    - s3.services.k8s.aws
+  kinds:
+    - Bucket
+assertions:
+  - path: spec.publicAccessBlock.blockPublicACLs
+    operator: is_true
+    message: spec.publicAccessBlock.blockPublicACLs is missing or not true
+remediation:
+  message: Set spec.publicAccessBlock.blockPublicACLs to true.
+  patch:
+    spec:
+      publicAccessBlock:
+        blockPublicACLs: true
+references:
+  - type: aws_security_hub
+    id: S3.1
+  - type: aws_config
+    id: s3-bucket-level-public-access-prohibited
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  The ACK s3-controller models the public access block inline on the Bucket
+  CRD under spec.publicAccessBlock; there is no separate
+  BucketPublicAccessBlock CRD in ACK. A missing block fails the control.
+---
+id: ACKRO_AWS_S3_002
+title: S3 Bucket public access block should block public bucket policies
+description: S3 Bucket resources should set publicAccessBlock.blockPublicPolicy to true.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: s3
+  type: Bucket
+match:
+  apiGroups:
+    - s3.services.k8s.aws
+  kinds:
+    - Bucket
+assertions:
+  - path: spec.publicAccessBlock.blockPublicPolicy
+    operator: is_true
+    message: spec.publicAccessBlock.blockPublicPolicy is missing or not true
+remediation:
+  message: Set spec.publicAccessBlock.blockPublicPolicy to true.
+  patch:
+    spec:
+      publicAccessBlock:
+        blockPublicPolicy: true
+references:
+  - type: aws_security_hub
+    id: S3.1
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+---
+id: ACKRO_AWS_S3_003
+title: S3 Bucket public access block should ignore public ACLs
+description: S3 Bucket resources should set publicAccessBlock.ignorePublicACLs to true.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: s3
+  type: Bucket
+match:
+  apiGroups:
+    - s3.services.k8s.aws
+  kinds:
+    - Bucket
+assertions:
+  - path: spec.publicAccessBlock.ignorePublicACLs
+    operator: is_true
+    message: spec.publicAccessBlock.ignorePublicACLs is missing or not true
+remediation:
+  message: Set spec.publicAccessBlock.ignorePublicACLs to true.
+  patch:
+    spec:
+      publicAccessBlock:
+        ignorePublicACLs: true
+references:
+  - type: aws_security_hub
+    id: S3.1
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+---
+id: ACKRO_AWS_S3_004
+title: S3 Bucket public access block should restrict public buckets
+description: S3 Bucket resources should set publicAccessBlock.restrictPublicBuckets to true.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: s3
+  type: Bucket
+match:
+  apiGroups:
+    - s3.services.k8s.aws
+  kinds:
+    - Bucket
+assertions:
+  - path: spec.publicAccessBlock.restrictPublicBuckets
+    operator: is_true
+    message: spec.publicAccessBlock.restrictPublicBuckets is missing or not true
+remediation:
+  message: Set spec.publicAccessBlock.restrictPublicBuckets to true.
+  patch:
+    spec:
+      publicAccessBlock:
+        restrictPublicBuckets: true
+references:
+  - type: aws_security_hub
+    id: S3.1
+compatibility:
+  status: stable
+  introducedIn: 0.1.0

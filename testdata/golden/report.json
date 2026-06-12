@@ -1,0 +1,61 @@
+{
+  "summary": {
+    "files_scanned": 2,
+    "resources_scanned": 3,
+    "findings": 2,
+    "critical": 0,
+    "high": 1,
+    "medium": 1,
+    "low": 0,
+    "info": 0,
+    "parse_errors": 0
+  },
+  "findings": [
+    {
+      "control_id": "ACKRO_AWS_RDS_001",
+      "title": "RDS DBInstance should enable storage encryption",
+      "severity": "HIGH",
+      "category": "DATA_PROTECTION",
+      "status": "FAILED",
+      "resource_api_version": "rds.services.k8s.aws/v1alpha1",
+      "resource_kind": "DBInstance",
+      "resource_name": "app-db",
+      "resource_namespace": "apps",
+      "file_path": "manifests/db.yaml",
+      "document_index": 0,
+      "line": 2,
+      "message": "RDS DBInstance resources should explicitly enable encryption at rest.",
+      "remediation": "Set spec.storageEncrypted to true.",
+      "references": [
+        {
+          "type": "aws_config",
+          "id": "rds-storage-encrypted"
+        }
+      ]
+    },
+    {
+      "control_id": "ACKRO_AWS_RDS_003",
+      "title": "RDS DBInstance should retain backups for at least 7 days",
+      "severity": "MEDIUM",
+      "category": "RESILIENCE",
+      "status": "WARNING",
+      "resource_api_version": "rds.services.k8s.aws/v1alpha1",
+      "resource_kind": "DBInstance",
+      "resource_name": "stack-db",
+      "file_path": "manifests/rgd.yaml",
+      "document_index": 0,
+      "message": "value is user-controlled via a templated expression",
+      "remediation": "Set spec.backupRetentionPeriod to 7 or more.",
+      "parent_resource_kind": "ResourceGraphDefinition",
+      "parent_resource_name": "db-stack",
+      "embedded_resource_kind": "DBInstance",
+      "embedded_resource_name": "stack-db"
+    }
+  ],
+  "parse_errors": [
+    {
+      "file_path": "manifests/broken.yaml",
+      "error": "document 0: yaml: mapping values are not allowed in this context"
+    }
+  ]
+}

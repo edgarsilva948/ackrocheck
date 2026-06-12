@@ -1,0 +1,80 @@
+id: ACKRO_AWS_SNS_001
+title: SNS Topic should use KMS encryption
+description: SNS Topic resources should set kmsMasterKeyID to encrypt messages at rest.
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: sns
+  type: Topic
+match:
+  apiGroups:
+    - sns.services.k8s.aws
+  kinds:
+    - Topic
+assertions:
+  - path: spec.kmsMasterKeyID
+    operator: exists
+    message: spec.kmsMasterKeyID is not set
+remediation:
+  message: Set spec.kmsMasterKeyID to a KMS key ID, ARN, or alias.
+  patch:
+    spec:
+      kmsMasterKeyID: alias/my-key
+references:
+  - type: aws_security_hub
+    id: SNS.1
+  - type: aws_config
+    id: sns-encrypted-kms
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  The ACK sns-controller exposes kmsMasterKeyID on the Topic CRD. SNS has no
+  service-managed SSE alternative, so the key field is required to pass.
+---
+id: ACKRO_AWS_SNS_002
+title: SNS Topic policy should not allow public access
+description: >-
+  SNS Topic policies should not contain Allow statements with a wildcard
+  principal and no condition.
+severity: CRITICAL
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: sns
+  type: Topic
+match:
+  apiGroups:
+    - sns.services.k8s.aws
+  kinds:
+    - Topic
+assertions:
+  - path: __ackrocheck.policyDocuments.policy.Statement
+    operator: all
+    message: the topic policy allows access to everyone (Principal "*" without a Condition)
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: Effect
+            operator: not_equals
+            value: Allow
+          - path: Principal.AWS
+            operator: not_contains
+            value: "*"
+          - path: HasCondition
+            operator: is_true
+remediation:
+  message: >-
+    Restrict the topic policy Principal, or add a Condition (e.g.
+    aws:SourceOwner) that limits who can publish or subscribe.
+references:
+  - type: aws_config
+    id: sns-topic-no-public-access
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  The ACK sns-controller models the access policy as a JSON string under
+  spec.policy on the Topic CRD.

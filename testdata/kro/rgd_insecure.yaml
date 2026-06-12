@@ -1,0 +1,24 @@
+# RGD embedding an insecure ACK DBInstance: storage not encrypted, public.
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: insecure-db-stack
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: DBStack
+    spec:
+      name: string
+  resources:
+    - id: database
+      template:
+        apiVersion: rds.services.k8s.aws/v1alpha1
+        kind: DBInstance
+        metadata:
+          name: stack-db
+        spec:
+          engine: postgres
+          dbInstanceClass: db.t3.medium
+          storageEncrypted: false
+          publiclyAccessible: true
+          backupRetentionPeriod: 1

@@ -1,0 +1,36 @@
+id: ACKRO_AWS_RDS_004
+title: Production RDS DBInstance should enable deletion protection
+description: >-
+  RDS DBInstance resources marked as production should set deletionProtection
+  to true.
+severity: MEDIUM
+category: RESILIENCE
+resource:
+  provider: aws
+  service: rds
+  type: DBInstance
+match:
+  apiGroups:
+    - rds.services.k8s.aws
+  kinds:
+    - DBInstance
+  productionOnly: true
+assertions:
+  - path: spec.deletionProtection
+    operator: is_true
+    message: spec.deletionProtection is missing or not true on a production resource
+remediation:
+  message: Set spec.deletionProtection to true.
+  patch:
+    spec:
+      deletionProtection: true
+references:
+  - type: aws_security_hub
+    id: RDS.8
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  Production resources are detected via metadata.labels environment/env set
+  to prod or production, or the annotation ackrocheck.dev/environment set to
+  production. Non-production resources are skipped.

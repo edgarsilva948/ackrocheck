@@ -1,0 +1,15 @@
+# Passes all RDS controls.
+apiVersion: rds.services.k8s.aws/v1alpha1
+kind: DBInstance
+metadata:
+  name: secure-db
+  namespace: apps
+  labels:
+    environment: prod
+spec:
+  engine: postgres
+  dbInstanceClass: db.t3.medium
+  storageEncrypted: true
+  publiclyAccessible: false
+  backupRetentionPeriod: 14
+  deletionProtection: true

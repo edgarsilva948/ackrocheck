@@ -1,0 +1,44 @@
+# Passes all IAM controls: scoped actions, scoped resources, scoped principal.
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Policy
+metadata:
+  name: scoped-policy
+  namespace: apps
+spec:
+  name: scoped-policy
+  policyDocument: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": ["s3:GetObject", "s3:PutObject"],
+          "Resource": "arn:aws:s3:::app-bucket/*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": "iam:PassRole",
+          "Resource": "arn:aws:iam::123456789012:role/app-exec"
+        }
+      ]
+    }
+---
+# Passes ACKRO_AWS_IAM_003: service principal, no wildcard.
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Role
+metadata:
+  name: app-role
+  namespace: apps
+spec:
+  name: app-role
+  assumeRolePolicyDocument: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {"Service": "eks.amazonaws.com"},
+          "Action": "sts:AssumeRole"
+        }
+      ]
+    }

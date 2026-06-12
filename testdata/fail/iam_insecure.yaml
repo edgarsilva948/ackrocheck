@@ -1,0 +1,59 @@
+# Fails ACKRO_AWS_IAM_001 (Action *), 002 (sensitive on Resource *), 004 (PassRole on *).
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Policy
+metadata:
+  name: admin-policy
+  namespace: apps
+spec:
+  name: admin-policy
+  policyDocument: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": "*",
+          "Resource": "*"
+        }
+      ]
+    }
+---
+# Fails ACKRO_AWS_IAM_003 (wildcard trust principal).
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Role
+metadata:
+  name: open-role
+  namespace: apps
+spec:
+  name: open-role
+  assumeRolePolicyDocument: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {"AWS": "*"},
+          "Action": "sts:AssumeRole"
+        }
+      ]
+    }
+---
+# Fails ACKRO_AWS_IAM_004 (iam:PassRole on Resource *), passes 001.
+apiVersion: iam.services.k8s.aws/v1alpha1
+kind: Policy
+metadata:
+  name: passrole-policy
+  namespace: apps
+spec:
+  name: passrole-policy
+  policyDocument: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": ["iam:PassRole", "lambda:CreateFunction"],
+          "Resource": "*"
+        }
+      ]
+    }

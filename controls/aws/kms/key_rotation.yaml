@@ -1,0 +1,35 @@
+id: ACKRO_AWS_KMS_001
+title: KMS Key should enable automatic rotation
+description: KMS Key resources should set enableKeyRotation to true.
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: kms
+  type: Key
+match:
+  apiGroups:
+    - kms.services.k8s.aws
+  kinds:
+    - Key
+assertions:
+  - path: spec.enableKeyRotation
+    operator: is_true
+    message: spec.enableKeyRotation is missing or not true
+remediation:
+  message: Set spec.enableKeyRotation to true.
+  patch:
+    spec:
+      enableKeyRotation: true
+references:
+  - type: aws_security_hub
+    id: KMS.4
+  - type: aws_config
+    id: cmk-backing-key-rotation-enabled
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  Rotation applies to symmetric customer-managed keys. Asymmetric keys do not
+  support rotation; if you manage asymmetric keys with ACK, suppress this
+  control for those manifests.

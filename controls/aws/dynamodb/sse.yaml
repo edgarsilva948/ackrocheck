@@ -1,0 +1,36 @@
+id: ACKRO_AWS_DYNAMODB_001
+title: DynamoDB Table should enable KMS server-side encryption
+description: >-
+  DynamoDB Table resources should set sseSpecification.enabled to true to use
+  a KMS key instead of the default AWS-owned key.
+severity: LOW
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: dynamodb
+  type: Table
+match:
+  apiGroups:
+    - dynamodb.services.k8s.aws
+  kinds:
+    - Table
+assertions:
+  - path: spec.sseSpecification.enabled
+    operator: is_true
+    message: spec.sseSpecification.enabled is missing or not true
+remediation:
+  message: Set spec.sseSpecification.enabled to true (optionally with kmsMasterKeyID).
+  patch:
+    spec:
+      sseSpecification:
+        enabled: true
+references:
+  - type: aws_config
+    id: dynamodb-table-encrypted-kms
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  DynamoDB always encrypts at rest with an AWS-owned key, so this is LOW
+  severity: the control enforces KMS-based encryption for auditability and
+  key control, not encryption per se.

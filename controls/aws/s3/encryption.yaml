@@ -1,0 +1,95 @@
+id: ACKRO_AWS_S3_005
+title: S3 Bucket should configure server-side encryption
+description: >-
+  S3 Bucket resources should declare a server-side encryption rule under
+  spec.encryption.rules.
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: s3
+  type: Bucket
+match:
+  apiGroups:
+    - s3.services.k8s.aws
+  kinds:
+    - Bucket
+assertions:
+  - path: spec.encryption.rules
+    operator: any
+    message: no server-side encryption rule with an SSE algorithm is configured
+    assertions:
+      - path: applyServerSideEncryptionByDefault.sseAlgorithm
+        operator: exists
+remediation:
+  message: >-
+    Add spec.encryption.rules with applyServerSideEncryptionByDefault
+    (sseAlgorithm AES256 or aws:kms).
+  patch:
+    spec:
+      encryption:
+        rules:
+          - applyServerSideEncryptionByDefault:
+              sseAlgorithm: AES256
+references:
+  - type: aws_config
+    id: s3-bucket-server-side-encryption-enabled
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  Since January 2023 AWS encrypts new buckets with SSE-S3 by default, but the
+  ACK manifest should still declare encryption explicitly so intent is
+  reviewable. Severity is MEDIUM for that reason. The ACK s3-controller models
+  this as spec.encryption (ServerSideEncryptionConfiguration) on the Bucket CRD.
+---
+id: ACKRO_AWS_S3_006
+title: S3 Bucket policy should not allow public access
+description: >-
+  S3 Bucket policies should not contain Allow statements with a wildcard
+  principal and no condition.
+severity: CRITICAL
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: s3
+  type: Bucket
+match:
+  apiGroups:
+    - s3.services.k8s.aws
+  kinds:
+    - Bucket
+assertions:
+  - path: __ackrocheck.policyDocuments.policy.Statement
+    operator: all
+    message: the bucket policy allows access to everyone (Principal "*" without a Condition)
+    assertions:
+      - path: .
+        operator: any
+        assertions:
+          - path: Effect
+            operator: not_equals
+            value: Allow
+          - path: Principal.AWS
+            operator: not_contains
+            value: "*"
+          - path: HasCondition
+            operator: is_true
+remediation:
+  message: >-
+    Restrict the bucket policy Principal to specific AWS principals, or add a
+    Condition that limits access.
+references:
+  - type: aws_security_hub
+    id: S3.2
+  - type: aws_config
+    id: s3-bucket-public-read-prohibited
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  The ACK s3-controller models the bucket policy as a JSON string under
+  spec.policy on the Bucket CRD. AckroCheck parses it defensively; statements
+  with a Condition are treated as intentionally scoped and pass. If the policy
+  string is not valid JSON the control passes (nothing to verify) — a parse
+  warning is not currently emitted.

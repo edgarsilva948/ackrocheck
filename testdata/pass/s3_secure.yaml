@@ -1,0 +1,30 @@
+# Passes all S3 controls.
+apiVersion: s3.services.k8s.aws/v1alpha1
+kind: Bucket
+metadata:
+  name: secure-bucket
+  namespace: apps
+spec:
+  name: secure-bucket
+  publicAccessBlock:
+    blockPublicACLs: true
+    blockPublicPolicy: true
+    ignorePublicACLs: true
+    restrictPublicBuckets: true
+  encryption:
+    rules:
+      - applyServerSideEncryptionByDefault:
+          sseAlgorithm: "aws:kms"
+          kmsMasterKeyID: alias/app-key
+  policy: |
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {"AWS": "arn:aws:iam::123456789012:role/app"},
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::secure-bucket/*"
+        }
+      ]
+    }

@@ -1,0 +1,31 @@
+id: ACKRO_AWS_SECRETSMANAGER_001
+title: Secrets Manager Secret should use a customer-managed KMS key
+description: >-
+  Secrets Manager Secret resources should set kmsKeyID so the secret is
+  encrypted with a customer-managed key instead of the default aws/secretsmanager key.
+severity: LOW
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: secretsmanager
+  type: Secret
+match:
+  apiGroups:
+    - secretsmanager.services.k8s.aws
+  kinds:
+    - Secret
+assertions:
+  - path: spec.kmsKeyID
+    operator: exists
+    message: spec.kmsKeyID is not set
+remediation:
+  message: Set spec.kmsKeyID to a customer-managed KMS key ID, ARN, or alias.
+references:
+  - type: aws_config
+    id: secretsmanager-using-cmk
+compatibility:
+  status: stable
+  introducedIn: 0.1.0
+notes: >-
+  Secrets Manager always encrypts secrets; this control enforces a
+  customer-managed key for cross-account access and key control.
