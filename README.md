@@ -1,11 +1,19 @@
 # AckroCheck
 
+[![CI](https://github.com/edgarsilva948/ackrocheck/actions/workflows/ci.yaml/badge.svg)](https://github.com/edgarsilva948/ackrocheck/actions/workflows/ci.yaml)
+[![codecov](https://codecov.io/gh/edgarsilva948/ackrocheck/graph/badge.svg)](https://codecov.io/gh/edgarsilva948/ackrocheck)
+[![Go Report Card](https://goreportcard.com/badge/github.com/edgarsilva948/ackrocheck)](https://goreportcard.com/report/github.com/edgarsilva948/ackrocheck)
+[![Go Reference](https://pkg.go.dev/badge/github.com/edgarsilva948/ackrocheck.svg)](https://pkg.go.dev/github.com/edgarsilva948/ackrocheck)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/edgarsilva948/ackrocheck)](go.mod)
+[![Release](https://img.shields.io/github/v/release/edgarsilva948/ackrocheck?include_prereleases)](https://github.com/edgarsilva948/ackrocheck/releases)
+[![License](https://img.shields.io/github/license/edgarsilva948/ackrocheck)](LICENSE)
+
 > Checkov-like security checks for AWS ACK and KRO manifests.
 
 AckroCheck is a static security scanner for Kubernetes YAML that defines AWS
-resources through [ACK](https://aws-controllers-k8s.github.io/community/)
+resources through [ACK](https://aws-controllers-k8s.github.io/docs/)
 (AWS Controllers for Kubernetes) CRDs and
-[KRO](https://kro.run) `ResourceGraphDefinition`s. It detects missing or
+[KRO](https://kro.run) `ResourceGraphDefinition`. It detects missing or
 insecure security configuration — unencrypted databases, public buckets,
 wildcard IAM, world-open security groups — before the manifests reach a
 cluster.

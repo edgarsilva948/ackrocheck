@@ -29,6 +29,12 @@ jobs:
         run: go test ./... -coverprofile=coverage.out -covermode=atomic
       - name: Coverage summary
         run: go tool cover -func=coverage.out | tail -1
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          files: coverage.out
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
