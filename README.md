@@ -18,6 +18,12 @@ insecure security configuration — unencrypted databases, public buckets,
 wildcard IAM, world-open security groups — before the manifests reach a
 cluster.
 
+**Status: stable.** The CLI flags, exit codes, output formats (text/JSON/SARIF/
+JUnit), and control IDs are stable and follow semantic versioning — a control's
+meaning never changes under a fixed ID (see [stability rules](docs/policy-schema.md#stability-rules)).
+The scope is deliberately minimal today (21 ACK services, 49 controls) and
+growing; see [What's next](#whats-next). Safe to wire into CI now.
+
 It is a single self-contained binary:
 
 - **No** container image, daemon, or Kubernetes cluster required
@@ -25,6 +31,9 @@ It is a single self-contained binary:
 - **No** network access during scans — fully offline and deterministic
 - Built-in controls are plain YAML, embedded in the binary, reviewable in
   [`controls/`](controls/)
+- Every control's assertion paths are validated against the real ACK CRD
+  schemas in CI, and a weekly job tracks upstream schema drift
+  ([`docs/coverage.md`](docs/coverage.md))
 
 ## Why
 
@@ -36,27 +45,54 @@ scanning.
 
 ## Installation
 
-### From a release
+Pick the method that fits the environment. All releases ship signed checksums
+and binaries for linux/amd64, linux/arm64, darwin/amd64, darwin/arm64, and
+windows/amd64.
 
-Download the binary for your platform from the
-[releases page](https://github.com/edgarsilva948/ackrocheck/releases),
-unpack, and put `ackrocheck` on your `PATH`. Binaries are published for
-linux/amd64, linux/arm64, darwin/amd64, darwin/arm64, and windows/amd64, with
-checksums.
+### Homebrew (macOS / Linux)
 
-### From source
+```bash
+brew install edgarsilva948/tap/ackrocheck
+```
+
+Upgrades come through `brew upgrade`. The cask removes the macOS quarantine
+bit on install, so no Gatekeeper prompt.
+
+### Install script (laptops & CI)
+
+Downloads the release archive for your OS/arch, verifies it against the
+published `checksums.txt`, and installs the binary:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/edgarsilva948/ackrocheck/main/install.sh | sh
+```
+
+Pin a version and/or install location (recommended for CI — reproducible and
+no surprise upgrades):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/edgarsilva948/ackrocheck/main/install.sh \
+  | ACKROCHECK_VERSION=v0.1.0 ACKROCHECK_BIN_DIR="$HOME/.local/bin" sh
+```
+
+The script refuses to install if the checksum cannot be verified. It needs
+only `curl`/`wget`, `tar`, and `sha256sum`/`shasum`.
+
+### `go install`
 
 ```bash
 go install github.com/edgarsilva948/ackrocheck/cmd/ackrocheck@latest
 ```
 
-or clone and build:
+Convenient where a Go toolchain is already present, but slower in CI (it
+compiles from source) and resolves the latest tag rather than a pinned binary.
 
-```bash
-git clone https://github.com/edgarsilva948/ackrocheck
-cd ackrocheck
-make build        # produces ./bin/ackrocheck
-```
+### Manual download
+
+Grab the archive for your platform from the
+[releases page](https://github.com/edgarsilva948/ackrocheck/releases), verify
+it against `checksums.txt`, unpack, and put `ackrocheck` on your `PATH`. This
+is the only path for Windows today (download the `.zip`).
 
 ## Usage
 
@@ -118,27 +154,41 @@ AckroCheck summary:
 Parse errors in individual files do **not** abort the scan; they are reported
 and the remaining files are scanned.
 
-## Supported resources (MVP)
+## Supported resources
 
-| Service | Kind | Controls |
+49 controls across 21 ACK services. Each control maps to an AWS Security Hub
+FSBP control and/or an AWS Config rule (see each control's `references`).
+
+| Service | Kind(s) | What it checks |
 |---|---|---|
-| RDS | DBInstance | storage encryption, public access, backup retention ≥ 7, deletion protection (production) |
+| RDS | DBInstance | storage encryption, public access, backup retention ≥ 7, deletion protection (prod) |
 | S3 | Bucket | public access block (4 settings), server-side encryption, public bucket policy |
 | IAM | Policy, Role, User, Group | `Action: "*"`, sensitive actions on `Resource: "*"`, wildcard trust principal, `iam:PassRole` on `*` |
+| EC2 | SecurityGroup | 0.0.0.0/0 and ::/0 ingress on 22/3389, 0.0.0.0/0 on database ports |
+| EKS | Cluster | private endpoint, KMS secrets encryption, audit logging |
+| ECS | Service, TaskDefinition | no auto-assigned public IPs, no privileged containers |
+| ElastiCache | ReplicationGroup | encryption at rest and in transit |
+| EFS | FileSystem | encryption at rest |
+| ELBv2 | Listener | HTTP→HTTPS redirect |
+| CloudFront | Distribution | encryption in transit, access logging |
+| MSK (Kafka) | Cluster | TLS in transit, no unauthenticated access |
+| DocumentDB | DBCluster | storage encryption, deletion protection (prod) |
+| OpenSearch | Domain | encryption at rest, node-to-node encryption, enforce HTTPS |
+| CloudTrail | Trail | KMS log encryption, log file validation |
 | SQS | Queue | KMS/SSE encryption, public queue policy |
 | SNS | Topic | KMS encryption, public topic policy |
 | ECR | Repository | scan-on-push, public repository policy |
-| EC2 | SecurityGroup | 0.0.0.0/0 and ::/0 ingress on 22/3389, 0.0.0.0/0 on database ports |
 | DynamoDB | Table | KMS SSE |
 | KMS | Key | key rotation |
 | Lambda | Function | customer-managed KMS key |
 | Secrets Manager | Secret | customer-managed KMS key |
 
-Run `ackrocheck controls list` for the authoritative list. Field mapping
-assumptions per service are documented in
-[`mappings/ack/README.md`](mappings/ack/README.md).
+Run `ackrocheck controls list` for the authoritative list and
+[`docs/coverage.md`](docs/coverage.md) for service/kind coverage against the
+full ACK CRD inventory. Field mapping assumptions per service are documented
+in [`mappings/ack/README.md`](mappings/ack/README.md).
 
-Production-only controls (currently RDS deletion protection) detect
+Production-only controls (RDS and DocumentDB deletion protection) detect
 production resources via `metadata.labels` `environment`/`env` set to
 `prod`/`production`, or the annotation
 `ackrocheck.dev/environment: production`.
@@ -195,7 +245,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install AckroCheck
-        run: go install github.com/edgarsilva948/ackrocheck/cmd/ackrocheck@latest
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/edgarsilva948/ackrocheck/main/install.sh \
+            | ACKROCHECK_VERSION=v0.1.0 sh
       - name: Scan manifests
         run: ackrocheck scan ./manifests --output sarif --output-file results.sarif --fail-on none
       - uses: github/codeql-action/upload-sarif@v3
@@ -205,13 +257,19 @@ jobs:
         run: ackrocheck scan ./manifests --quiet
 ```
 
+Pin `ACKROCHECK_VERSION` to a real release tag so builds are reproducible and
+the checksum is verified.
+
 ### GitLab CI with JUnit report
 
 ```yaml
 ackrocheck:
-  image: golang:1.26
+  image: alpine:3
+  before_script:
+    - apk add --no-cache curl tar
+    - curl -fsSL https://raw.githubusercontent.com/edgarsilva948/ackrocheck/main/install.sh
+        | ACKROCHECK_VERSION=v0.1.0 sh
   script:
-    - go install github.com/edgarsilva948/ackrocheck/cmd/ackrocheck@latest
     - ackrocheck scan ./manifests --output junit --output-file results.xml
   artifacts:
     when: always
@@ -219,55 +277,33 @@ ackrocheck:
       junit: results.xml
 ```
 
-## Development
+## What's next
 
-```bash
-make test                 # run all tests
-make test-coverage        # coverage.out + coverage.html
-make lint                 # gofmt check + go vet
-make build                # ./bin/ackrocheck
-make run-example          # scan the bundled failing fixtures
-make goreleaser-snapshot  # local multi-platform snapshot build (requires goreleaser)
-```
+AckroCheck is stable but intentionally small. The near-term direction:
 
-Releases are produced by GoReleaser when a `v*` tag is pushed
-(`.github/workflows/release.yaml`). No Docker involved.
+- **Broaden coverage.** More controls per covered service and more ACK service
+  families (MemoryDB, MQ, Route 53, API Gateway, ACM, and uncovered kinds of
+  services already supported). The weekly drift job surfaces new services and
+  fields as ACK ships them; see [`docs/coverage.md`](docs/coverage.md).
+- **Suppression & baselines.** Inline `ackrocheck:ignore` comments and a
+  baseline file to adopt the tool on existing repos without a wall of findings.
+- **Field-accurate line numbers.** Findings currently point at the start of the
+  YAML document; the goal is the exact offending field.
+- **Deeper KRO analysis.** Fold `ResourceGraphDefinition` schema defaults and
+  instance overlays into evaluation instead of warning on every CEL expression.
+- **External control ergonomics.** An `ackrocheck controls validate` command so
+  teams authoring their own YAML controls get the same CRD-path validation the
+  built-in controls get in CI.
 
-### Test coverage
+### Current limitations
 
-CI runs the full suite with coverage on every push. Current totals are ~95%
-overall, with the policy engine, parser, and report generation above 90%.
-Targets: ≥80% total, ≥90% for engine/parser/report packages.
-
-Example manifests live in [`testdata/pass`](testdata/pass) (clean),
-[`testdata/fail`](testdata/fail) (findings), and
-[`testdata/kro`](testdata/kro) (RGDs, including one with templated fields).
-
-## Known limitations (MVP)
-
-- **No CEL evaluation** — templated KRO fields are warnings, not verdicts;
-  RGD schema defaults are not folded in.
 - **Static analysis only** — controls see what the manifest declares. Account
-  defaults, registry-level ECR settings, or resources created outside ACK are
-  invisible.
-- **IAM analysis is structural** — wildcard detection covers `*` and a
-  conservative sensitive-action list; it is not a full IAM Access Analyzer.
-- **Line numbers point at document starts**, not the failing field.
-- **No suppression/skip mechanism yet** (no inline `ackrocheck:skip`
-  comments or baseline file).
-- **External controls are local YAML only** — by design; no remote policy
-  fetching and no executable policies.
-- Coverage of ACK services is the table above; other ACK controllers parse
-  fine but have no controls yet.
-
-## Roadmap
-
-- Field-accurate line numbers in findings
-- Inline suppression comments and a baseline file
-- KRO schema default folding and instance-overlay analysis
-- More ACK service families (EKS, ElastiCache, OpenSearch, MQ, …)
-- CIS/Security Hub control mappings in `references`
-- An `ackrocheck controls validate` command for external control authoring
+  defaults, runtime state, and resources created outside ACK are invisible.
+- **No CEL evaluation** — templated KRO fields are warnings, not verdicts.
+- **IAM analysis is structural** — wildcard and sensitive-action detection, not
+  a full IAM Access Analyzer.
+- **External controls are local YAML only** — by design; no remote fetching and
+  no executable policies.
 
 ## License
 

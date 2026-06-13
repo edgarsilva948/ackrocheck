@@ -32,6 +32,9 @@ builds:
 
 archives:
   - id: default
+    # Explicit, stable names so the curl installer script can construct the
+    # download URL deterministically: ackrocheck_<Os>_<Arch>.tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
     formats: [tar.gz]
     format_overrides:
       - goos: windows
@@ -42,6 +45,31 @@ archives:
 
 checksum:
   name_template: checksums.txt
+
+# Homebrew cask published to a separate tap repository. Casks (not formulas)
+# are the right fit for a pre-built binary; the post-install hook strips the
+# macOS quarantine bit since the binary is not yet code-signed/notarized.
+# Requires a GH_PAT secret with `repo` scope on edgarsilva948/homebrew-tap.
+homebrew_casks:
+  - name: ackrocheck
+    repository:
+      owner: edgarsilva948
+      name: homebrew-tap
+      token: "{{ .Env.GH_PAT }}"
+    binaries:
+      - ackrocheck
+    homepage: "https://github.com/edgarsilva948/ackrocheck"
+    description: "Static security scanner for AWS ACK and KRO Kubernetes manifests"
+    license: "Apache-2.0"
+    # Do not publish the cask for pre-releases (e.g. v1.0.0-rc1).
+    skip_upload: auto
+    commit_msg_template: "Cask update for {{ .ProjectName }} version {{ .Tag }}"
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/ackrocheck"]
+          end
 
 snapshot:
   version_template: "{{ incpatch .Version }}-snapshot-{{ .ShortCommit }}"
