@@ -1,0 +1,45 @@
+# Fails ACKRO_AWS_ELASTICACHE_001 (no at-rest encryption), 002 (no transit encryption)
+apiVersion: elasticache.services.k8s.aws/v1alpha1
+kind: ReplicationGroup
+metadata:
+  name: insecure-cache
+  namespace: apps
+spec:
+  replicationGroupID: insecure-cache
+  description: cache without encryption
+  atRestEncryptionEnabled: false
+---
+# Fails ACKRO_AWS_EFS_001 (unencrypted)
+apiVersion: efs.services.k8s.aws/v1alpha1
+kind: FileSystem
+metadata:
+  name: insecure-fs
+  namespace: apps
+spec:
+  encrypted: false
+---
+# Fails ACKRO_AWS_DOCUMENTDB_001 (unencrypted), 002 (prod, no deletion protection)
+apiVersion: documentdb.services.k8s.aws/v1alpha1
+kind: DBCluster
+metadata:
+  name: insecure-docdb
+  namespace: apps
+  labels:
+    environment: prod
+spec:
+  dbClusterIdentifier: insecure-docdb
+  engine: docdb
+  storageEncrypted: false
+---
+# Fails ACKRO_AWS_OPENSEARCH_001 (no at-rest), 002 (no node-to-node), 003 (no HTTPS enforcement)
+apiVersion: opensearchservice.services.k8s.aws/v1alpha1
+kind: Domain
+metadata:
+  name: insecure-domain
+  namespace: apps
+spec:
+  name: insecure-domain
+  encryptionAtRestOptions:
+    enabled: false
+  domainEndpointOptions:
+    enforceHTTPS: false

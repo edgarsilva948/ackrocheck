@@ -1,0 +1,74 @@
+id: ACKRO_AWS_DOCUMENTDB_001
+title: DocumentDB cluster should be encrypted at rest
+description: >-
+  DocumentDB DBCluster resources should enable storage encryption.
+severity: HIGH
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: documentdb
+  type: DBCluster
+match:
+  apiGroups:
+    - documentdb.services.k8s.aws
+  kinds:
+    - DBCluster
+assertions:
+  - path: spec.storageEncrypted
+    operator: is_true
+    message: spec.storageEncrypted is missing or not true
+remediation:
+  message: Set spec.storageEncrypted to true (optionally with kmsKeyID).
+  patch:
+    spec:
+      storageEncrypted: true
+references:
+  - type: aws_security_hub
+    id: DocumentDB.1
+  - type: aws_config
+    id: docdb-cluster-encrypted
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing storageEncrypted fails because the DocumentDB default is
+  unencrypted storage, and encryption cannot be enabled after creation.
+---
+id: ACKRO_AWS_DOCUMENTDB_002
+title: DocumentDB cluster should enable deletion protection
+description: >-
+  Production DocumentDB DBCluster resources should enable deletion
+  protection.
+severity: MEDIUM
+category: RESILIENCE
+resource:
+  provider: aws
+  service: documentdb
+  type: DBCluster
+match:
+  apiGroups:
+    - documentdb.services.k8s.aws
+  kinds:
+    - DBCluster
+  productionOnly: true
+assertions:
+  - path: spec.deletionProtection
+    operator: is_true
+    message: spec.deletionProtection is missing or not true
+remediation:
+  message: Set spec.deletionProtection to true.
+  patch:
+    spec:
+      deletionProtection: true
+references:
+  - type: aws_security_hub
+    id: DocumentDB.5
+  - type: aws_config
+    id: docdb-cluster-deletion-protection-enabled
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  Production-only (same convention as ACKRO_AWS_RDS_004): deletion
+  protection on ephemeral environments blocks teardown automation. A missing
+  field fails because the API default is false.

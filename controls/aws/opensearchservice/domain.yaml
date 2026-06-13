@@ -1,0 +1,116 @@
+id: ACKRO_AWS_OPENSEARCH_001
+title: OpenSearch domain should encrypt data at rest
+description: >-
+  OpenSearch Domain resources should enable encryption at rest.
+severity: HIGH
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: opensearchservice
+  type: Domain
+match:
+  apiGroups:
+    - opensearchservice.services.k8s.aws
+  kinds:
+    - Domain
+assertions:
+  - path: spec.encryptionAtRestOptions.enabled
+    operator: is_true
+    message: spec.encryptionAtRestOptions.enabled is missing or not true
+remediation:
+  message: Set spec.encryptionAtRestOptions.enabled to true (optionally with kmsKeyID).
+  patch:
+    spec:
+      encryptionAtRestOptions:
+        enabled: true
+references:
+  - type: aws_security_hub
+    id: Opensearch.1
+  - type: aws_config
+    id: opensearch-encrypted-at-rest
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing encryptionAtRestOptions fails: the OpenSearch API default is
+  unencrypted, and enabling it later requires a blue/green deployment.
+---
+id: ACKRO_AWS_OPENSEARCH_002
+title: OpenSearch domain should encrypt node-to-node traffic
+description: >-
+  OpenSearch Domain resources should enable node-to-node encryption.
+severity: HIGH
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: opensearchservice
+  type: Domain
+match:
+  apiGroups:
+    - opensearchservice.services.k8s.aws
+  kinds:
+    - Domain
+assertions:
+  - path: spec.nodeToNodeEncryptionOptions.enabled
+    operator: is_true
+    message: spec.nodeToNodeEncryptionOptions.enabled is missing or not true
+remediation:
+  message: Set spec.nodeToNodeEncryptionOptions.enabled to true.
+  patch:
+    spec:
+      nodeToNodeEncryptionOptions:
+        enabled: true
+references:
+  - type: aws_security_hub
+    id: Opensearch.3
+  - type: aws_config
+    id: opensearch-node-to-node-encryption-check
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing nodeToNodeEncryptionOptions fails because the API default is
+  unencrypted intra-cluster traffic.
+---
+id: ACKRO_AWS_OPENSEARCH_003
+title: OpenSearch domain should enforce HTTPS
+description: >-
+  OpenSearch Domain resources should require HTTPS for all endpoint
+  connections.
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: opensearchservice
+  type: Domain
+match:
+  apiGroups:
+    - opensearchservice.services.k8s.aws
+  kinds:
+    - Domain
+assertions:
+  - path: spec.domainEndpointOptions.enforceHTTPS
+    operator: is_true
+    message: spec.domainEndpointOptions.enforceHTTPS is missing or not true
+remediation:
+  message: >-
+    Set spec.domainEndpointOptions.enforceHTTPS to true (and prefer the
+    latest tlsSecurityPolicy).
+  patch:
+    spec:
+      domainEndpointOptions:
+        enforceHTTPS: true
+        tlsSecurityPolicy: Policy-Min-TLS-1-2-PFS-2023-10
+references:
+  - type: aws_security_hub
+    id: Opensearch.8
+  - type: aws_config
+    id: opensearch-https-required
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  Security Hub Opensearch.8 additionally requires the latest TLS policy
+  (Policy-Min-TLS-1-2-PFS-2023-10); this control only asserts enforceHTTPS
+  because the "latest" policy value drifts over time and is better handled by
+  remediation guidance than a hard assertion.

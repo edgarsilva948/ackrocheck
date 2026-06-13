@@ -1,0 +1,44 @@
+# Fails ACKRO_AWS_EKS_001 (public endpoint), 002 (no secret encryption), 003 (no audit logs)
+apiVersion: eks.services.k8s.aws/v1alpha1
+kind: Cluster
+metadata:
+  name: insecure-eks
+  namespace: apps
+spec:
+  name: insecure-eks
+  roleARN: arn:aws:iam::111122223333:role/eks-cluster
+  resourcesVPCConfig:
+    endpointPublicAccess: true
+    subnetIDs: [subnet-1, subnet-2]
+  logging:
+    clusterLogging:
+      - enabled: true
+        types: ["api"]
+---
+# Fails ACKRO_AWS_ECS_001 (public IP auto-assign)
+apiVersion: ecs.services.k8s.aws/v1alpha1
+kind: Service
+metadata:
+  name: insecure-ecs-svc
+  namespace: apps
+spec:
+  serviceName: insecure-ecs-svc
+  networkConfiguration:
+    awsVPCConfiguration:
+      assignPublicIP: ENABLED
+      subnets: [subnet-1]
+---
+# Fails ACKRO_AWS_ECS_002 (privileged container)
+apiVersion: ecs.services.k8s.aws/v1alpha1
+kind: TaskDefinition
+metadata:
+  name: insecure-taskdef
+  namespace: apps
+spec:
+  family: insecure-taskdef
+  containerDefinitions:
+    - name: app
+      image: nginx:latest
+    - name: sidecar
+      image: debug:latest
+      privileged: true

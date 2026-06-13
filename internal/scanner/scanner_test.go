@@ -55,6 +55,16 @@ func TestBuiltinControlsLoad(t *testing.T) {
 		"ACKRO_AWS_SNS_001", "ACKRO_AWS_SNS_002",
 		"ACKRO_AWS_ECR_001", "ACKRO_AWS_ECR_002",
 		"ACKRO_AWS_EC2_001", "ACKRO_AWS_EC2_002", "ACKRO_AWS_EC2_003", "ACKRO_AWS_EC2_004", "ACKRO_AWS_EC2_005",
+		"ACKRO_AWS_EKS_001", "ACKRO_AWS_EKS_002", "ACKRO_AWS_EKS_003",
+		"ACKRO_AWS_ECS_001", "ACKRO_AWS_ECS_002",
+		"ACKRO_AWS_ELASTICACHE_001", "ACKRO_AWS_ELASTICACHE_002",
+		"ACKRO_AWS_EFS_001",
+		"ACKRO_AWS_ELBV2_001",
+		"ACKRO_AWS_CLOUDFRONT_001", "ACKRO_AWS_CLOUDFRONT_002",
+		"ACKRO_AWS_MSK_001", "ACKRO_AWS_MSK_002",
+		"ACKRO_AWS_DOCUMENTDB_001", "ACKRO_AWS_DOCUMENTDB_002",
+		"ACKRO_AWS_OPENSEARCH_001", "ACKRO_AWS_OPENSEARCH_002", "ACKRO_AWS_OPENSEARCH_003",
+		"ACKRO_AWS_CLOUDTRAIL_001", "ACKRO_AWS_CLOUDTRAIL_002",
 	} {
 		if !ids[want] {
 			t.Errorf("missing built-in control %s", want)
@@ -108,6 +118,29 @@ func TestFailFixtures(t *testing.T) {
 		"ACKRO_AWS_EC2_002/open-sg",
 		"ACKRO_AWS_EC2_003/open-sg",
 		"ACKRO_AWS_EC2_004/open-sg",
+		// Compute (EKS/ECS)
+		"ACKRO_AWS_EKS_001/insecure-eks",
+		"ACKRO_AWS_EKS_002/insecure-eks",
+		"ACKRO_AWS_EKS_003/insecure-eks",
+		"ACKRO_AWS_ECS_001/insecure-ecs-svc",
+		"ACKRO_AWS_ECS_002/insecure-taskdef",
+		// Data stores (ElastiCache/EFS/DocumentDB/OpenSearch)
+		"ACKRO_AWS_ELASTICACHE_001/insecure-cache",
+		"ACKRO_AWS_ELASTICACHE_002/insecure-cache",
+		"ACKRO_AWS_EFS_001/insecure-fs",
+		"ACKRO_AWS_DOCUMENTDB_001/insecure-docdb",
+		"ACKRO_AWS_DOCUMENTDB_002/insecure-docdb",
+		"ACKRO_AWS_OPENSEARCH_001/insecure-domain",
+		"ACKRO_AWS_OPENSEARCH_002/insecure-domain",
+		"ACKRO_AWS_OPENSEARCH_003/insecure-domain",
+		// Edge/streaming/audit (ELBv2/CloudFront/MSK/CloudTrail)
+		"ACKRO_AWS_ELBV2_001/insecure-listener",
+		"ACKRO_AWS_CLOUDFRONT_001/insecure-dist",
+		"ACKRO_AWS_CLOUDFRONT_002/insecure-dist",
+		"ACKRO_AWS_MSK_001/insecure-msk",
+		"ACKRO_AWS_MSK_002/insecure-msk",
+		"ACKRO_AWS_CLOUDTRAIL_001/insecure-trail",
+		"ACKRO_AWS_CLOUDTRAIL_002/insecure-trail",
 	}
 	for _, key := range wantFailed {
 		f, ok := got[key]

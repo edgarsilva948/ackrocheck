@@ -1,0 +1,81 @@
+id: ACKRO_AWS_ECS_001
+title: ECS service should not auto-assign public IPs
+description: >-
+  ECS Service resources using awsvpc networking should not assign public IP
+  addresses to tasks automatically.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: ecs
+  type: Service
+match:
+  apiGroups:
+    - ecs.services.k8s.aws
+  kinds:
+    - Service
+assertions:
+  - path: spec.networkConfiguration.awsVPCConfiguration.assignPublicIP
+    operator: not_equals
+    value: ENABLED
+    message: spec.networkConfiguration.awsVPCConfiguration.assignPublicIP is ENABLED
+remediation:
+  message: >-
+    Set spec.networkConfiguration.awsVPCConfiguration.assignPublicIP to
+    DISABLED and reach the internet through a NAT gateway if needed.
+  patch:
+    spec:
+      networkConfiguration:
+        awsVPCConfiguration:
+          assignPublicIP: DISABLED
+references:
+  - type: aws_security_hub
+    id: ECS.2
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing assignPublicIP passes: the ECS API default is DISABLED, and
+  services without awsvpc networking have no such field. Security Hub ECS.2
+  maps to the custom rule ecs-service-assign-public-ip-disabled (not an AWS
+  Config managed rule).
+---
+id: ACKRO_AWS_ECS_002
+title: ECS task definition containers should not run privileged
+description: >-
+  ECS TaskDefinition containers should not enable privileged mode, which
+  grants the container full access to the host.
+severity: HIGH
+category: IAM
+resource:
+  provider: aws
+  service: ecs
+  type: TaskDefinition
+match:
+  apiGroups:
+    - ecs.services.k8s.aws
+  kinds:
+    - TaskDefinition
+assertions:
+  - path: spec.containerDefinitions
+    operator: all
+    message: a container definition sets privileged to true
+    assertions:
+      - path: privileged
+        operator: not_equals
+        value: true
+remediation:
+  message: "Remove privileged: true from container definitions."
+references:
+  - type: aws_security_hub
+    id: ECS.4
+  - type: aws_config
+    id: ecs-containers-nonprivileged
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  Containers without the privileged field pass (Docker and ECS default to
+  unprivileged). A task definition with no containerDefinitions passes the
+  `all` quantifier vacuously; the ECS API rejects such task definitions
+  anyway.

@@ -1,0 +1,97 @@
+id: ACKRO_AWS_MSK_001
+title: MSK cluster should require TLS in transit
+description: >-
+  MSK Cluster resources should not disable TLS encryption between brokers or
+  allow plaintext client connections.
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: kafka
+  type: Cluster
+match:
+  apiGroups:
+    - kafka.services.k8s.aws
+  kinds:
+    - Cluster
+assertions:
+  - path: spec.encryptionInfo.encryptionInTransit.inCluster
+    operator: not_equals
+    value: false
+    message: spec.encryptionInfo.encryptionInTransit.inCluster is explicitly false
+  - path: spec.encryptionInfo.encryptionInTransit.clientBroker
+    operator: not_equals
+    value: PLAINTEXT
+    message: clientBroker allows plaintext connections
+  - path: spec.encryptionInfo.encryptionInTransit.clientBroker
+    operator: not_equals
+    value: TLS_PLAINTEXT
+    message: clientBroker allows plaintext connections
+remediation:
+  message: >-
+    Remove encryptionInTransit overrides or set inCluster to true and
+    clientBroker to TLS.
+  patch:
+    spec:
+      encryptionInfo:
+        encryptionInTransit:
+          inCluster: true
+          clientBroker: TLS
+references:
+  - type: aws_security_hub
+    id: MSK.1
+  - type: aws_config
+    id: msk-in-cluster-node-require-tls
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  Unlike most encryption controls, missing fields PASS here: the MSK defaults
+  (inCluster true, clientBroker TLS) are secure, so only explicit insecure
+  overrides are flagged. The serverless Kafka kind (ServerlessCluster) nests
+  the same fields under spec.provisioned and is not covered by this control.
+---
+id: ACKRO_AWS_MSK_002
+title: MSK cluster should disable unauthenticated access
+description: >-
+  MSK Cluster resources should explicitly disable unauthenticated client
+  access and configure SASL/IAM or TLS authentication.
+severity: MEDIUM
+category: IAM
+resource:
+  provider: aws
+  service: kafka
+  type: Cluster
+match:
+  apiGroups:
+    - kafka.services.k8s.aws
+  kinds:
+    - Cluster
+assertions:
+  - path: spec.clientAuthentication.unauthenticated.enabled
+    operator: is_false
+    message: spec.clientAuthentication.unauthenticated.enabled is missing or not false
+remediation:
+  message: >-
+    Set spec.clientAuthentication.unauthenticated.enabled to false and enable
+    an authentication mechanism (sasl.iam, sasl.scram, or tls).
+  patch:
+    spec:
+      clientAuthentication:
+        unauthenticated:
+          enabled: false
+        sasl:
+          iam:
+            enabled: true
+references:
+  - type: aws_security_hub
+    id: MSK.6
+  - type: aws_config
+    id: msk-unrestricted-access-check
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing clientAuthentication block fails: when no authentication is
+  configured, MSK permits unauthenticated access by default, so the safe
+  state must be explicit.
