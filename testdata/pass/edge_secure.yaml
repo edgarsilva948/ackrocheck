@@ -1,0 +1,75 @@
+apiVersion: elbv2.services.k8s.aws/v1alpha1
+kind: Listener
+metadata:
+  name: secure-http-listener
+  namespace: apps
+spec:
+  protocol: HTTP
+  port: 80
+  defaultActions:
+    - type: redirect
+      redirectConfig:
+        protocol: HTTPS
+        port: "443"
+        statusCode: HTTP_301
+---
+apiVersion: elbv2.services.k8s.aws/v1alpha1
+kind: Listener
+metadata:
+  name: secure-https-listener
+  namespace: apps
+spec:
+  protocol: HTTPS
+  port: 443
+  sslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+  defaultActions:
+    - type: forward
+      targetGroupARN: arn:aws:elasticloadbalancing:us-east-1:111122223333:targetgroup/tg/abc
+---
+apiVersion: cloudfront.services.k8s.aws/v1alpha1
+kind: Distribution
+metadata:
+  name: secure-dist
+  namespace: apps
+spec:
+  distributionConfig:
+    defaultCacheBehavior:
+      viewerProtocolPolicy: redirect-to-https
+    cacheBehaviors:
+      items:
+        - pathPattern: "/api/*"
+          viewerProtocolPolicy: https-only
+    logging:
+      enabled: true
+      bucket: logs.s3.amazonaws.com
+      prefix: cdn/
+      includeCookies: false
+---
+apiVersion: kafka.services.k8s.aws/v1alpha1
+kind: Cluster
+metadata:
+  name: secure-msk
+  namespace: apps
+spec:
+  name: secure-msk
+  encryptionInfo:
+    encryptionInTransit:
+      inCluster: true
+      clientBroker: TLS
+  clientAuthentication:
+    unauthenticated:
+      enabled: false
+    sasl:
+      iam:
+        enabled: true
+---
+apiVersion: cloudtrail.services.k8s.aws/v1alpha1
+kind: Trail
+metadata:
+  name: secure-trail
+  namespace: apps
+spec:
+  name: secure-trail
+  s3BucketName: my-trail-bucket
+  kmsKeyID: arn:aws:kms:us-east-1:111122223333:key/1234abcd
+  enableLogFileValidation: true

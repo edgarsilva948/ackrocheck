@@ -1,0 +1,46 @@
+apiVersion: eks.services.k8s.aws/v1alpha1
+kind: Cluster
+metadata:
+  name: secure-eks
+  namespace: apps
+spec:
+  name: secure-eks
+  roleARN: arn:aws:iam::111122223333:role/eks-cluster
+  resourcesVPCConfig:
+    endpointPublicAccess: false
+    endpointPrivateAccess: true
+    subnetIDs: [subnet-1, subnet-2]
+  encryptionConfig:
+    - resources: ["secrets"]
+      provider:
+        keyARN: arn:aws:kms:us-east-1:111122223333:key/1234abcd
+  logging:
+    clusterLogging:
+      - enabled: true
+        types: ["audit", "api"]
+---
+apiVersion: ecs.services.k8s.aws/v1alpha1
+kind: Service
+metadata:
+  name: secure-ecs-svc
+  namespace: apps
+spec:
+  serviceName: secure-ecs-svc
+  networkConfiguration:
+    awsVPCConfiguration:
+      assignPublicIP: DISABLED
+      subnets: [subnet-1]
+---
+apiVersion: ecs.services.k8s.aws/v1alpha1
+kind: TaskDefinition
+metadata:
+  name: secure-taskdef
+  namespace: apps
+spec:
+  family: secure-taskdef
+  containerDefinitions:
+    - name: app
+      image: nginx:latest
+      privileged: false
+    - name: sidecar
+      image: helper:latest

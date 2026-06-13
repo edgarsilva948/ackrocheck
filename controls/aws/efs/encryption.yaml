@@ -1,0 +1,36 @@
+id: ACKRO_AWS_EFS_001
+title: EFS file system should be encrypted at rest
+description: >-
+  EFS FileSystem resources should enable encryption of file data at rest.
+severity: HIGH
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: efs
+  type: FileSystem
+match:
+  apiGroups:
+    - efs.services.k8s.aws
+  kinds:
+    - FileSystem
+assertions:
+  - path: spec.encrypted
+    operator: is_true
+    message: spec.encrypted is missing or not true
+remediation:
+  message: Set spec.encrypted to true (optionally with kmsKeyID).
+  patch:
+    spec:
+      encrypted: true
+references:
+  - type: aws_security_hub
+    id: EFS.1
+  - type: aws_config
+    id: efs-encrypted-check
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing spec.encrypted fails: the EFS API default for CreateFileSystem is
+  unencrypted (the console enables it, the API does not), and encryption
+  cannot be enabled after creation.

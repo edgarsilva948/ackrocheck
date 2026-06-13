@@ -1,0 +1,57 @@
+id: ACKRO_AWS_ELBV2_001
+title: ALB HTTP listener should redirect to HTTPS
+description: >-
+  ELBv2 Listener resources using the HTTP protocol should redirect all
+  requests to HTTPS instead of forwarding them in cleartext.
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: elbv2
+  type: Listener
+match:
+  apiGroups:
+    - elbv2.services.k8s.aws
+  kinds:
+    - Listener
+assertions:
+  - path: .
+    operator: any
+    message: HTTP listener does not redirect all requests to HTTPS
+    assertions:
+      - path: spec.protocol
+        operator: not_equals
+        value: HTTP
+      - path: spec.defaultActions
+        operator: all
+        assertions:
+          - path: redirectConfig.protocol
+            operator: equals
+            value: HTTPS
+remediation:
+  message: >-
+    Change the listener default action to a redirect with protocol HTTPS and
+    statusCode HTTP_301, or switch the listener protocol to HTTPS.
+  patch:
+    spec:
+      defaultActions:
+        - type: redirect
+          redirectConfig:
+            protocol: HTTPS
+            port: "443"
+            statusCode: HTTP_301
+references:
+  - type: aws_security_hub
+    id: ELB.1
+  - type: aws_config
+    id: alb-http-to-https-redirection-check
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  Only listeners with spec.protocol HTTP are evaluated; TCP/UDP (NLB) and
+  HTTPS listeners pass the first alternative. For HTTP listeners, every
+  default action must be a redirect to HTTPS — a forward action has no
+  redirectConfig and fails. Listener rules (elbv2 Rule kind) are not
+  evaluated; a rule-level redirect with a non-redirecting default action
+  still fails, matching the Security Hub semantics.

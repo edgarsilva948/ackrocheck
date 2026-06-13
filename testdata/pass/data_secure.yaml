@@ -1,0 +1,47 @@
+apiVersion: elasticache.services.k8s.aws/v1alpha1
+kind: ReplicationGroup
+metadata:
+  name: secure-cache
+  namespace: apps
+spec:
+  replicationGroupID: secure-cache
+  description: encrypted cache
+  atRestEncryptionEnabled: true
+  transitEncryptionEnabled: true
+---
+apiVersion: efs.services.k8s.aws/v1alpha1
+kind: FileSystem
+metadata:
+  name: secure-fs
+  namespace: apps
+spec:
+  encrypted: true
+  kmsKeyID: arn:aws:kms:us-east-1:111122223333:key/1234abcd
+---
+apiVersion: documentdb.services.k8s.aws/v1alpha1
+kind: DBCluster
+metadata:
+  name: secure-docdb
+  namespace: apps
+  labels:
+    environment: prod
+spec:
+  dbClusterIdentifier: secure-docdb
+  engine: docdb
+  storageEncrypted: true
+  deletionProtection: true
+---
+apiVersion: opensearchservice.services.k8s.aws/v1alpha1
+kind: Domain
+metadata:
+  name: secure-domain
+  namespace: apps
+spec:
+  name: secure-domain
+  encryptionAtRestOptions:
+    enabled: true
+  nodeToNodeEncryptionOptions:
+    enabled: true
+  domainEndpointOptions:
+    enforceHTTPS: true
+    tlsSecurityPolicy: Policy-Min-TLS-1-2-PFS-2023-10

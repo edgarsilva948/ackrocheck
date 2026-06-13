@@ -1,0 +1,142 @@
+id: ACKRO_AWS_EKS_001
+title: EKS cluster endpoint should not be publicly accessible
+description: >-
+  EKS Cluster resources should disable public access to the Kubernetes API
+  endpoint and rely on private endpoint access.
+severity: HIGH
+category: NETWORK_EXPOSURE
+resource:
+  provider: aws
+  service: eks
+  type: Cluster
+match:
+  apiGroups:
+    - eks.services.k8s.aws
+  kinds:
+    - Cluster
+assertions:
+  - path: spec.resourcesVPCConfig.endpointPublicAccess
+    operator: is_false
+    message: spec.resourcesVPCConfig.endpointPublicAccess is missing or not false
+remediation:
+  message: >-
+    Set spec.resourcesVPCConfig.endpointPublicAccess to false and
+    endpointPrivateAccess to true. If public access is required, restrict
+    spec.resourcesVPCConfig.publicAccessCIDRs.
+  patch:
+    spec:
+      resourcesVPCConfig:
+        endpointPublicAccess: false
+        endpointPrivateAccess: true
+references:
+  - type: aws_security_hub
+    id: EKS.1
+  - type: aws_config
+    id: eks-endpoint-no-public-access
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing endpointPublicAccess fails this control because the EKS default
+  is a publicly accessible endpoint. Clusters that intentionally expose the
+  endpoint behind publicAccessCIDRs restrictions still fail; suppress the
+  finding case by case if that exposure is deliberate.
+---
+id: ACKRO_AWS_EKS_002
+title: EKS cluster should encrypt Kubernetes secrets with KMS
+description: >-
+  EKS Cluster resources should configure envelope encryption of Kubernetes
+  secrets via spec.encryptionConfig.
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: eks
+  type: Cluster
+match:
+  apiGroups:
+    - eks.services.k8s.aws
+  kinds:
+    - Cluster
+assertions:
+  - path: spec.encryptionConfig
+    operator: any
+    message: no spec.encryptionConfig entry covers "secrets"
+    assertions:
+      - path: resources
+        operator: contains
+        value: secrets
+remediation:
+  message: >-
+    Add an encryptionConfig entry with resources ["secrets"] and a KMS key
+    (provider.keyARN or provider.keyRef).
+  patch:
+    spec:
+      encryptionConfig:
+        - resources: ["secrets"]
+          provider:
+            keyARN: arn:aws:kms:REGION:ACCOUNT:key/KEY_ID
+references:
+  - type: aws_security_hub
+    id: EKS.3
+  - type: aws_config
+    id: eks-cluster-secrets-encrypted
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing or empty encryptionConfig fails because EKS does not envelope-
+  encrypt secrets by default. Only the presence of a "secrets" entry is
+  checked; the EKS API requires a provider key for any entry, and the key may
+  be given as keyARN or as an ACK keyRef, so the key itself is not asserted.
+  EKS clusters created after January 2026 may use default envelope encryption;
+  this control still requires an explicit config.
+---
+id: ACKRO_AWS_EKS_003
+title: EKS cluster should enable audit logging
+description: >-
+  EKS Cluster resources should enable control plane audit logs delivery to
+  CloudWatch Logs.
+severity: MEDIUM
+category: LOGGING
+resource:
+  provider: aws
+  service: eks
+  type: Cluster
+match:
+  apiGroups:
+    - eks.services.k8s.aws
+  kinds:
+    - Cluster
+assertions:
+  - path: spec.logging.clusterLogging
+    operator: any
+    message: no spec.logging.clusterLogging entry enables the "audit" log type
+    assertions:
+      - path: enabled
+        operator: is_true
+      - path: types
+        operator: contains
+        value: audit
+remediation:
+  message: >-
+    Enable the "audit" log type under spec.logging.clusterLogging.
+  patch:
+    spec:
+      logging:
+        clusterLogging:
+          - enabled: true
+            types: ["audit"]
+references:
+  - type: aws_security_hub
+    id: EKS.8
+  - type: aws_config
+    id: eks-cluster-log-enabled
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  Missing logging configuration fails because all control plane log types are
+  disabled by default. Security Hub EKS.8 checks the audit log type
+  specifically (eks-cluster-log-enabled with logTypes audit); enabling other
+  types without "audit" still fails.

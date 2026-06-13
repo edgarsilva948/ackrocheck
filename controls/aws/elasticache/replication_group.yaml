@@ -1,0 +1,72 @@
+id: ACKRO_AWS_ELASTICACHE_001
+title: ElastiCache replication group should be encrypted at rest
+description: >-
+  ElastiCache ReplicationGroup resources should enable encryption at rest.
+severity: HIGH
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: elasticache
+  type: ReplicationGroup
+match:
+  apiGroups:
+    - elasticache.services.k8s.aws
+  kinds:
+    - ReplicationGroup
+assertions:
+  - path: spec.atRestEncryptionEnabled
+    operator: is_true
+    message: spec.atRestEncryptionEnabled is missing or not true
+remediation:
+  message: Set spec.atRestEncryptionEnabled to true (optionally with kmsKeyID).
+  patch:
+    spec:
+      atRestEncryptionEnabled: true
+references:
+  - type: aws_security_hub
+    id: ElastiCache.4
+  - type: aws_config
+    id: elasticache-repl-grp-encrypted-at-rest
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing atRestEncryptionEnabled fails: for Redis engine versions before
+  7.x the AWS default is unencrypted at rest, and an explicit true is the
+  only statically verifiable safe state.
+---
+id: ACKRO_AWS_ELASTICACHE_002
+title: ElastiCache replication group should be encrypted in transit
+description: >-
+  ElastiCache ReplicationGroup resources should enable encryption in transit.
+severity: HIGH
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: elasticache
+  type: ReplicationGroup
+match:
+  apiGroups:
+    - elasticache.services.k8s.aws
+  kinds:
+    - ReplicationGroup
+assertions:
+  - path: spec.transitEncryptionEnabled
+    operator: is_true
+    message: spec.transitEncryptionEnabled is missing or not true
+remediation:
+  message: Set spec.transitEncryptionEnabled to true.
+  patch:
+    spec:
+      transitEncryptionEnabled: true
+references:
+  - type: aws_security_hub
+    id: ElastiCache.5
+  - type: aws_config
+    id: elasticache-repl-grp-encrypted-in-transit
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing transitEncryptionEnabled fails because the AWS default is
+  unencrypted client-broker traffic for most engine versions.

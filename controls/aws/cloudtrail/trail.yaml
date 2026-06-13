@@ -1,0 +1,74 @@
+id: ACKRO_AWS_CLOUDTRAIL_001
+title: CloudTrail trail should encrypt logs with KMS
+description: >-
+  CloudTrail Trail resources should encrypt delivered log files with a KMS
+  key (SSE-KMS).
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: cloudtrail
+  type: Trail
+match:
+  apiGroups:
+    - cloudtrail.services.k8s.aws
+  kinds:
+    - Trail
+assertions:
+  - path: spec.kmsKeyID
+    operator: exists
+    message: spec.kmsKeyID is not set
+remediation:
+  message: Set spec.kmsKeyID to a KMS key ARN or alias.
+  patch:
+    spec:
+      kmsKeyID: arn:aws:kms:REGION:ACCOUNT:key/KEY_ID
+references:
+  - type: aws_security_hub
+    id: CloudTrail.2
+  - type: aws_config
+    id: cloud-trail-encryption-enabled
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  Without kmsKeyID, CloudTrail delivers logs with SSE-S3 (encrypted, but not
+  under a customer-managed key) — hence MEDIUM, mirroring Security Hub. Only
+  the presence of the field is asserted; the ACK CRD also allows kmsKeyRef,
+  which this control does not recognize and will flag.
+---
+id: ACKRO_AWS_CLOUDTRAIL_002
+title: CloudTrail trail should enable log file validation
+description: >-
+  CloudTrail Trail resources should enable log file integrity validation.
+severity: LOW
+category: LOGGING
+resource:
+  provider: aws
+  service: cloudtrail
+  type: Trail
+match:
+  apiGroups:
+    - cloudtrail.services.k8s.aws
+  kinds:
+    - Trail
+assertions:
+  - path: spec.enableLogFileValidation
+    operator: is_true
+    message: spec.enableLogFileValidation is missing or not true
+remediation:
+  message: Set spec.enableLogFileValidation to true.
+  patch:
+    spec:
+      enableLogFileValidation: true
+references:
+  - type: aws_security_hub
+    id: CloudTrail.4
+  - type: aws_config
+    id: cloud-trail-log-file-validation-enabled
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing enableLogFileValidation fails because the CreateTrail default is
+  false.

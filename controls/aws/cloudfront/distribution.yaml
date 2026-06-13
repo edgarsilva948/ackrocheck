@@ -1,0 +1,94 @@
+id: ACKRO_AWS_CLOUDFRONT_001
+title: CloudFront distribution should require encryption in transit
+description: >-
+  CloudFront Distribution cache behaviors should not allow unencrypted
+  (allow-all) viewer connections.
+severity: MEDIUM
+category: DATA_PROTECTION
+resource:
+  provider: aws
+  service: cloudfront
+  type: Distribution
+match:
+  apiGroups:
+    - cloudfront.services.k8s.aws
+  kinds:
+    - Distribution
+assertions:
+  - path: spec.distributionConfig.defaultCacheBehavior.viewerProtocolPolicy
+    operator: not_equals
+    value: allow-all
+    message: defaultCacheBehavior.viewerProtocolPolicy is allow-all
+  - path: spec.distributionConfig.cacheBehaviors.items
+    operator: all
+    message: a cache behavior sets viewerProtocolPolicy to allow-all
+    assertions:
+      - path: viewerProtocolPolicy
+        operator: not_equals
+        value: allow-all
+remediation:
+  message: >-
+    Set viewerProtocolPolicy to redirect-to-https (or https-only) on the
+    default cache behavior and every additional cache behavior.
+  patch:
+    spec:
+      distributionConfig:
+        defaultCacheBehavior:
+          viewerProtocolPolicy: redirect-to-https
+references:
+  - type: aws_security_hub
+    id: CloudFront.3
+  - type: aws_config
+    id: cloudfront-viewer-policy-https
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing viewerProtocolPolicy passes (not_equals semantics); the
+  CloudFront API requires the field on every cache behavior, so manifests
+  omitting it are rejected upstream. Distributions without extra
+  cacheBehaviors pass the `all` quantifier vacuously.
+---
+id: ACKRO_AWS_CLOUDFRONT_002
+title: CloudFront distribution should have access logging enabled
+description: >-
+  CloudFront Distribution resources should enable standard access logging.
+severity: MEDIUM
+category: LOGGING
+resource:
+  provider: aws
+  service: cloudfront
+  type: Distribution
+match:
+  apiGroups:
+    - cloudfront.services.k8s.aws
+  kinds:
+    - Distribution
+assertions:
+  - path: spec.distributionConfig.logging.enabled
+    operator: is_true
+    message: spec.distributionConfig.logging.enabled is missing or not true
+remediation:
+  message: >-
+    Enable spec.distributionConfig.logging with a target bucket.
+  patch:
+    spec:
+      distributionConfig:
+        logging:
+          enabled: true
+          bucket: my-logs.s3.amazonaws.com
+          prefix: cloudfront/
+          includeCookies: false
+references:
+  - type: aws_security_hub
+    id: CloudFront.5
+  - type: aws_config
+    id: cloudfront-accesslogs-enabled
+compatibility:
+  status: stable
+  introducedIn: 0.2.0
+notes: >-
+  A missing logging block fails because CloudFront does not log by default.
+  Security Hub CloudFront.5 evaluates legacy/standard logging only — log
+  delivery configured via CloudWatch v2 (real-time logs) is not visible in
+  the distribution config and is not considered here either.

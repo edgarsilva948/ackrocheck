@@ -1,0 +1,95 @@
+name: ACK schema drift
+
+on:
+  schedule:
+    # Mondays 06:00 UTC — upstream ACK releases land throughout the week.
+    - cron: "0 6 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Regenerate inventory and classify drift
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          go run ./tools/ack-inventory \
+            -drift-report /tmp/drift.md \
+            -issues-json /tmp/issues.json
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet -- mappings/ack/inventory.json docs/coverage.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run tests against refreshed inventory
+        if: steps.diff.outputs.changed == 'true'
+        # Failures are expected when upstream CRD changes break control
+        # paths; the drift report and broken-policy issue carry the detail,
+        # and the PR's own CI will show the failing path validator.
+        continue-on-error: true
+        run: go test ./...
+
+      - name: Open inventory refresh PR
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="ack-drift/$(date -u +%Y-%m-%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add mappings/ack/inventory.json docs/coverage.md
+          git commit -m "Refresh ACK inventory ($(date -u +%Y-%m-%d))"
+          git push -u origin "$BRANCH" --force
+          if gh pr list --head "$BRANCH" --json number --jq length | grep -qv '^0$'; then
+            echo "PR already open for $BRANCH"
+          else
+            gh pr create \
+              --title "Refresh ACK inventory ($(date -u +%Y-%m-%d))" \
+              --body-file /tmp/drift.md
+          fi
+
+      - name: Open drift issues
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for label in broken-policy new-service schema-drift; do
+            gh label create "$label" --force \
+              --description "ACK drift: $label" \
+              --color "$(case $label in broken-policy) echo B60205;; new-service) echo 0E8A16;; *) echo FBCA04;; esac)"
+          done
+          count=$(jq length /tmp/issues.json)
+          for i in $(seq 0 $((count - 1))); do
+            title=$(jq -r ".[$i].title" /tmp/issues.json)
+            body=$(jq -r ".[$i].body" /tmp/issues.json)
+            labels=$(jq -r ".[$i].labels | join(\",\")" /tmp/issues.json)
+            # Skip if an open issue with the same title already exists.
+            if gh issue list --state open --search "in:title \"$title\"" \
+                 --json title --jq '.[].title' | grep -Fxq "$title"; then
+              echo "issue already open: $title"
+              continue
+            fi
+            gh issue create --title "$title" --body "$body" --label "$labels"
+          done
+
+      - name: No drift
+        if: steps.diff.outputs.changed == 'false'
+        run: echo "Inventory unchanged — no drift this week."

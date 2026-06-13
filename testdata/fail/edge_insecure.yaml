@@ -1,0 +1,53 @@
+# Fails ACKRO_AWS_ELBV2_001 (HTTP listener forwards instead of redirecting)
+apiVersion: elbv2.services.k8s.aws/v1alpha1
+kind: Listener
+metadata:
+  name: insecure-listener
+  namespace: apps
+spec:
+  protocol: HTTP
+  port: 80
+  defaultActions:
+    - type: forward
+      targetGroupARN: arn:aws:elasticloadbalancing:us-east-1:111122223333:targetgroup/tg/abc
+---
+# Fails ACKRO_AWS_CLOUDFRONT_001 (allow-all behavior), 002 (no logging)
+apiVersion: cloudfront.services.k8s.aws/v1alpha1
+kind: Distribution
+metadata:
+  name: insecure-dist
+  namespace: apps
+spec:
+  distributionConfig:
+    defaultCacheBehavior:
+      viewerProtocolPolicy: redirect-to-https
+    cacheBehaviors:
+      items:
+        - pathPattern: "/legacy/*"
+          viewerProtocolPolicy: allow-all
+---
+# Fails ACKRO_AWS_MSK_001 (plaintext client traffic), 002 (unauthenticated access)
+apiVersion: kafka.services.k8s.aws/v1alpha1
+kind: Cluster
+metadata:
+  name: insecure-msk
+  namespace: apps
+spec:
+  name: insecure-msk
+  encryptionInfo:
+    encryptionInTransit:
+      clientBroker: TLS_PLAINTEXT
+  clientAuthentication:
+    unauthenticated:
+      enabled: true
+---
+# Fails ACKRO_AWS_CLOUDTRAIL_001 (no KMS), 002 (no validation)
+apiVersion: cloudtrail.services.k8s.aws/v1alpha1
+kind: Trail
+metadata:
+  name: insecure-trail
+  namespace: apps
+spec:
+  name: insecure-trail
+  s3BucketName: my-trail-bucket
+  enableLogFileValidation: false
