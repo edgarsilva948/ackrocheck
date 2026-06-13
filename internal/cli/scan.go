@@ -28,6 +28,7 @@ type scanOptions struct {
 	quiet       bool
 	verbose     bool
 	noColor     bool
+	showPassed  bool
 }
 
 var validOutputs = map[string]bool{"cli": true, "json": true, "sarif": true, "junit": true}
@@ -65,6 +66,7 @@ Exit codes:
 	f.BoolVarP(&opts.quiet, "quiet", "q", false, "only print the summary (cli output)")
 	f.BoolVarP(&opts.verbose, "verbose", "v", false, "print diagnostic details to stderr")
 	f.BoolVar(&opts.noColor, "no-color", false, "disable colored output")
+	f.BoolVar(&opts.showPassed, "show-passed", false, "also list controls that passed (cli output)")
 	return cmd
 }
 
@@ -108,8 +110,9 @@ func runScan(cmd *cobra.Command, paths []string, opts *scanOptions) error {
 	}
 
 	sc := scanner.New(policies, scanner.Options{
-		Frameworks:  frameworks,
-		MinSeverity: minSeverity,
+		Frameworks:    frameworks,
+		MinSeverity:   minSeverity,
+		IncludePassed: opts.showPassed,
 	})
 	rep := sc.Scan(parsed)
 
@@ -142,7 +145,11 @@ func runScan(cmd *cobra.Command, paths []string, opts *scanOptions) error {
 func writeReport(w io.Writer, rep *scanner.Report, format string, opts *scanOptions) error {
 	switch format {
 	case "cli":
-		return report.WriteCLI(w, rep, report.CLIOptions{NoColor: opts.noColor || opts.outputFile != "", Quiet: opts.quiet})
+		return report.WriteCLI(w, rep, report.CLIOptions{
+			NoColor:    opts.noColor || opts.outputFile != "",
+			Quiet:      opts.quiet,
+			ShowPassed: opts.showPassed,
+		})
 	case "json":
 		return report.WriteJSON(w, rep)
 	case "sarif":

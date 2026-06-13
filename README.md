@@ -113,6 +113,9 @@ ackrocheck scan ./manifests --severity high      # only report HIGH+
 # restrict frameworks
 ackrocheck scan ./manifests --framework ack,kro
 
+# also show the controls that passed (in green)
+ackrocheck scan ./manifests --show-passed
+
 # bring your own controls (local YAML only)
 ackrocheck scan ./manifests --external-controls ./my-controls/
 
@@ -125,12 +128,19 @@ ackrocheck version
 
 ### Example output
 
+Each finding shows the resource, the exact reason, a copy-paste fix, and a
+link to the control's [guide](https://edgarsilva948.github.io/ackrocheck/controls/):
+
 ```text
-FAILED ACKRO_AWS_RDS_001 HIGH
-Resource: rds.services.k8s.aws/v1alpha1 DBInstance app-db
-File: manifests/db.yaml:2 (document 0)
-Reason: RDS DBInstance resources should explicitly enable encryption at rest. (spec.storageEncrypted is missing or not true)
-Fix: Set spec.storageEncrypted to true.
+FAILED ACKRO_AWS_RDS_001 HIGH  RDS DBInstance should enable storage encryption
+  Resource: rds.services.k8s.aws/v1alpha1 DBInstance app-db
+  File: manifests/db.yaml:2 (document 0)
+  Reason: RDS DBInstance resources should explicitly enable encryption at rest. (spec.storageEncrypted is missing or not true)
+  Fix: Set spec.storageEncrypted to true.
+  Apply:
+      spec:
+          storageEncrypted: true
+  Guide: https://edgarsilva948.github.io/ackrocheck/controls/ackro_aws_rds_001/
 
 AckroCheck summary:
   Files scanned: 12
@@ -142,6 +152,11 @@ AckroCheck summary:
   Low: 0
   Info: 0
 ```
+
+With `--show-passed`, controls that passed are also listed (green) with a
+`Passed:` count in the summary — useful as evidence of what was verified.
+The control guide is generated from the control YAML and published to GitHub
+Pages (`make controls-docs`).
 
 ### Exit codes
 

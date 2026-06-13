@@ -1,0 +1,57 @@
+name: Controls docs (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "controls/**"
+      - "tools/controls-docs/**"
+      - ".github/workflows/pages.yaml"
+  workflow_dispatch: {}
+
+# Allow one concurrent deployment; let a newer run cancel an in-progress one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Generate control pages
+        run: |
+          go run ./tools/controls-docs -out site/controls
+          # A landing page so the site root is not empty.
+          cp site/controls/index.md site/index.md
+      - uses: actions/configure-pages@v5
+      - name: Render Markdown to HTML
+        # Lightweight static rendering: GitHub Pages serves the Markdown via
+        # Jekyll by default. A minimal _config keeps relative control links
+        # working under the project subpath.
+        run: |
+          cat > site/_config.yml <<'EOF'
+          title: AckroCheck controls
+          description: Security control reference for AWS ACK and KRO manifests
+          EOF
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

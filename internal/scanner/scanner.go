@@ -6,6 +6,8 @@ package scanner
 import (
 	"strings"
 
+	"gopkg.in/yaml.v3"
+
 	"github.com/edgarsilva948/ackrocheck/internal/ack"
 	"github.com/edgarsilva948/ackrocheck/internal/engine"
 	"github.com/edgarsilva948/ackrocheck/internal/kro"
@@ -28,6 +30,10 @@ type Options struct {
 	Frameworks []Framework
 	// MinSeverity filters out findings below this severity.
 	MinSeverity policy.Severity
+	// IncludePassed collects controls that passed into Report.Passed. Off by
+	// default so the common case does no extra work and failure-only
+	// consumers are unaffected.
+	IncludePassed bool
 }
 
 // Scanner evaluates resources against a set of policies.
@@ -59,12 +65,16 @@ func (s *Scanner) Scan(parsed *parser.Result) *Report {
 		case kro.IsResourceGraphDefinition(res):
 			if s.frameworkEnabled(FrameworkKRO) {
 				report.Summary.ResourcesScanned++
-				report.Findings = append(report.Findings, s.scanRGD(res)...)
+				findings, passed := s.scanRGD(res)
+				report.Findings = append(report.Findings, findings...)
+				report.Passed = append(report.Passed, passed...)
 			}
 		case ack.IsACKGroup(res.APIGroup()):
 			if s.frameworkEnabled(FrameworkACK) {
 				report.Summary.ResourcesScanned++
-				report.Findings = append(report.Findings, s.scanResource(res, nil)...)
+				findings, passed := s.scanResource(res, nil)
+				report.Findings = append(report.Findings, findings...)
+				report.Passed = append(report.Passed, passed...)
 			}
 		}
 	}
@@ -86,14 +96,19 @@ func (s *Scanner) Scan(parsed *parser.Result) *Report {
 			report.Summary.Info++
 		}
 	}
+	SortPassed(report.Passed)
+	report.Summary.Passed = len(report.Passed)
 	return report
 }
 
-// scanResource evaluates one resource against all matching policies.
-// parent is non-nil when the resource is embedded in a KRO RGD.
-func (s *Scanner) scanResource(res *parser.Resource, parent *parser.Resource) []Finding {
+// scanResource evaluates one resource against all matching policies, returning
+// findings (failures/warnings) and, when Options.IncludePassed is set, the
+// controls that passed. parent is non-nil when the resource is embedded in a
+// KRO RGD.
+func (s *Scanner) scanResource(res *parser.Resource, parent *parser.Resource) ([]Finding, []PassedCheck) {
 	doc := ack.NormalizePolicyDocuments(res.Raw)
 	var findings []Finding
+	var passed []PassedCheck
 	for i := range s.policies {
 		p := &s.policies[i]
 		if !p.Matches(res.APIGroup(), res.Kind) {
@@ -104,6 +119,16 @@ func (s *Scanner) scanResource(res *parser.Resource, parent *parser.Resource) []
 		}
 		outcome := engine.Evaluate(p, doc)
 		if outcome.Result == engine.Pass {
+			if s.opts.IncludePassed && p.Severity.AtLeast(s.opts.MinSeverity) {
+				passed = append(passed, PassedCheck{
+					ControlID:    p.ID,
+					Title:        p.Title,
+					Severity:     p.Severity,
+					ResourceKind: res.Kind,
+					ResourceName: res.Name,
+					FilePath:     res.FilePath,
+				})
+			}
 			continue
 		}
 		f := Finding{
@@ -121,6 +146,8 @@ func (s *Scanner) scanResource(res *parser.Resource, parent *parser.Resource) []
 			Line:               res.Line,
 			Message:            buildMessage(p, outcome.Messages),
 			Remediation:        p.Remediation.Message,
+			RemediationPatch:   renderPatch(p.Remediation.Patch),
+			GuideURL:           GuideURL(p.ID),
 			References:         p.References,
 		}
 		if outcome.Result == engine.Unknown {
@@ -135,13 +162,14 @@ func (s *Scanner) scanResource(res *parser.Resource, parent *parser.Resource) []
 		}
 		findings = append(findings, f)
 	}
-	return findings
+	return findings, passed
 }
 
 // scanRGD extracts embedded templates from a ResourceGraphDefinition and
 // scans any that belong to ACK API groups with the normal policy engine.
-func (s *Scanner) scanRGD(rgd *parser.Resource) []Finding {
+func (s *Scanner) scanRGD(rgd *parser.Resource) ([]Finding, []PassedCheck) {
 	var findings []Finding
+	var passed []PassedCheck
 	for _, emb := range kro.ExtractEmbedded(rgd) {
 		res := emb.Resource
 		if !ack.IsACKGroup(res.APIGroup()) {
@@ -150,9 +178,11 @@ func (s *Scanner) scanRGD(rgd *parser.Resource) []Finding {
 		if res.Name == "" {
 			res.Name = emb.ID
 		}
-		findings = append(findings, s.scanResource(&res, rgd)...)
+		f, pc := s.scanResource(&res, rgd)
+		findings = append(findings, f...)
+		passed = append(passed, pc...)
 	}
-	return findings
+	return findings, passed
 }
 
 func (s *Scanner) frameworkEnabled(f Framework) bool {
@@ -186,6 +216,20 @@ func buildMessage(p *policy.Policy, details []string) string {
 		msg += " (" + strings.Join(details, "; ") + ")"
 	}
 	return msg
+}
+
+// renderPatch marshals a policy's informational remediation patch to a YAML
+// snippet (trailing newline trimmed) developers can copy into their manifest.
+// Returns "" when there is no patch or it cannot be marshaled.
+func renderPatch(patch map[string]interface{}) string {
+	if len(patch) == 0 {
+		return ""
+	}
+	out, err := yaml.Marshal(patch)
+	if err != nil {
+		return ""
+	}
+	return strings.TrimRight(string(out), "\n")
 }
 
 func buildWarningMessage(p *policy.Policy, details []string) string {

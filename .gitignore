@@ -1,6 +1,8 @@
 # Build artifacts
 /bin/
 /dist/
+# Generated control docs site (built by tools/controls-docs in CI)
+/site/
 
 # Test and coverage output
 coverage.out
