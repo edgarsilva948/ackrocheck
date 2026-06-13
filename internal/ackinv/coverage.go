@@ -81,7 +81,7 @@ func CoverageReport(inv *Inventory, policies []policy.Policy) string {
 
 	b.WriteString("\n## Uncovered kinds\n\n")
 	b.WriteString("Kinds with no matching control, grouped by service:\n\n")
-	any := false
+	hasUncovered := false
 	for _, r := range rows {
 		var uncovered []string
 		for _, k := range r.svc.Kinds {
@@ -93,10 +93,10 @@ func CoverageReport(inv *Inventory, policies []policy.Policy) string {
 		if len(uncovered) == 0 {
 			continue
 		}
-		any = true
+		hasUncovered = true
 		fmt.Fprintf(&b, "- **%s**: %s\n", r.svc.Name, strings.Join(uncovered, ", "))
 	}
-	if !any {
+	if !hasUncovered {
 		b.WriteString("(none)\n")
 	}
 	return b.String()

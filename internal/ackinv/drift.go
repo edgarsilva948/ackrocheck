@@ -45,10 +45,10 @@ func (d *Drift) Empty() bool {
 // current built-in controls, used both to detect broken assertion paths and
 // to scope field-level drift to covered kinds (field churn on the ~230
 // uncovered kinds would drown the signal).
-func Classify(old, new *Inventory, policies []policy.Policy) *Drift {
+func Classify(old, updated *Inventory, policies []policy.Policy) *Drift {
 	d := &Drift{}
 
-	for _, err := range ValidatePolicyPaths(new, policies) {
+	for _, err := range ValidatePolicyPaths(updated, policies) {
 		d.BrokenPolicies = append(d.BrokenPolicies, err.Error())
 	}
 
@@ -66,8 +66,8 @@ func Classify(old, new *Inventory, policies []policy.Policy) *Drift {
 		oldSvc[old.Services[i].Name] = &old.Services[i]
 	}
 	newSvc := map[string]*Service{}
-	for i := range new.Services {
-		newSvc[new.Services[i].Name] = &new.Services[i]
+	for i := range updated.Services {
+		newSvc[updated.Services[i].Name] = &updated.Services[i]
 	}
 
 	for name := range newSvc {

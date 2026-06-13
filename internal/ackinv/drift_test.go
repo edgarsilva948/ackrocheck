@@ -18,7 +18,7 @@ func driftFixtures() (*Inventory, *Inventory, []policy.Policy) {
 		}}},
 		{Name: "gone", Release: "v0.1.0", Kinds: []Kind{}},
 	}}
-	new := &Inventory{Services: []Service{
+	updated := &Inventory{Services: []Service{
 		{Name: "s3", Release: "v1.6.0", Kinds: []Kind{
 			{
 				Kind: "Bucket", Group: "s3.services.k8s.aws",
@@ -42,12 +42,12 @@ func driftFixtures() (*Inventory, *Inventory, []policy.Policy) {
 			{Path: "spec.legacyField", Operator: policy.OpExists},
 		},
 	}}
-	return old, new, policies
+	return old, updated, policies
 }
 
 func TestClassifyDrift(t *testing.T) {
-	old, new, policies := driftFixtures()
-	d := Classify(old, new, policies)
+	old, updated, policies := driftFixtures()
+	d := Classify(old, updated, policies)
 
 	if len(d.BrokenPolicies) != 1 || !strings.Contains(d.BrokenPolicies[0], "spec.legacyField") {
 		t.Errorf("broken policies: %v", d.BrokenPolicies)
@@ -76,8 +76,8 @@ func TestClassifyDrift(t *testing.T) {
 }
 
 func TestDriftIssuesAndReport(t *testing.T) {
-	old, new, policies := driftFixtures()
-	d := Classify(old, new, policies)
+	old, updated, policies := driftFixtures()
+	d := Classify(old, updated, policies)
 
 	issues := d.Issues()
 	labels := map[string]bool{}
@@ -112,10 +112,10 @@ func TestNoDrift(t *testing.T) {
 }
 
 func TestFieldDriftIgnoredOnUncoveredKinds(t *testing.T) {
-	old, new, _ := driftFixtures()
+	old, updated, _ := driftFixtures()
 	// Without any policies covering Bucket, field-level drift is suppressed
 	// (it belongs to the coverage backlog, not the drift report).
-	d := Classify(old, new, nil)
+	d := Classify(old, updated, nil)
 	if len(d.NewFields) != 0 || len(d.RemovedFields) != 0 {
 		t.Errorf("field drift on uncovered kind should be ignored: %+v", d)
 	}
