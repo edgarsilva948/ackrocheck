@@ -131,13 +131,13 @@ func Classify(old, updated *Inventory, policies []policy.Policy) *Drift {
 	return d
 }
 
-func diffFields(old, new []Field) (added, removed []string) {
+func diffFields(old, updated []Field) (added, removed []string) {
 	oldSet := map[string]bool{}
 	for _, f := range old {
 		oldSet[f.Path] = true
 	}
 	newSet := map[string]bool{}
-	for _, f := range new {
+	for _, f := range updated {
 		newSet[f.Path] = true
 	}
 	for p := range newSet {
