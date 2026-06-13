@@ -15,7 +15,7 @@ LDFLAGS := -s -w \
 	-X $(MODULE)/internal/version.Date=$(DATE) \
 	-X $(MODULE)/internal/version.ControlsVersion=$(CONTROLS)
 
-.PHONY: build test test-coverage lint run-example goreleaser-snapshot clean fmt vet
+.PHONY: build test test-coverage lint run-example goreleaser-snapshot clean fmt vet ack-inventory
 
 build:
 	$(GO) build -ldflags "$(LDFLAGS)" -o $(BIN_DIR)/$(BINARY) ./cmd/ackrocheck
@@ -37,6 +37,9 @@ run-example: build
 
 goreleaser-snapshot:
 	goreleaser release --snapshot --clean
+
+ack-inventory:
+	$(GO) run ./tools/ack-inventory
 
 fmt:
 	gofmt -w .
