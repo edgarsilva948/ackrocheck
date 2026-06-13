@@ -27,4 +27,8 @@ jobs:
           version: "~> v2"
           args: release --clean
         env:
+          # GITHUB_TOKEN publishes the release to this repo; GH_PAT lets the
+          # Homebrew cask be pushed to the separate edgarsilva948/homebrew-tap
+          # repo (the default token cannot write to other repositories).
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}
