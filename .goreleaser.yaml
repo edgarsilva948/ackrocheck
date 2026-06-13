@@ -55,14 +55,19 @@ homebrew_casks:
     repository:
       owner: edgarsilva948
       name: homebrew-tap
-      token: "{{ .Env.GH_PAT }}"
+      # envOrDefault (not .Env.GH_PAT) so the template still resolves when the
+      # secret is absent — the release then proceeds and skip_upload below
+      # keeps the cask local instead of failing the whole release.
+      token: '{{ envOrDefault "GH_PAT" "" }}'
     binaries:
       - ackrocheck
     homepage: "https://github.com/edgarsilva948/ackrocheck"
     description: "Static security scanner for AWS ACK and KRO Kubernetes manifests"
     license: "Apache-2.0"
-    # Do not publish the cask for pre-releases (e.g. v1.0.0-rc1).
-    skip_upload: auto
+    # Resilient publishing: skip the tap commit when GH_PAT is missing/empty
+    # (token expired, fork without the secret), and always skip for
+    # pre-releases. Otherwise publish normally.
+    skip_upload: '{{ if isEnvSet "GH_PAT" }}auto{{ else }}true{{ end }}'
     commit_msg_template: "Cask update for {{ .ProjectName }} version {{ .Tag }}"
     hooks:
       post:
