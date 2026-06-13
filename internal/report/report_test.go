@@ -41,6 +41,8 @@ func sampleReport() *scanner.Report {
 				Line:               2,
 				Message:            "RDS DBInstance resources should explicitly enable encryption at rest.",
 				Remediation:        "Set spec.storageEncrypted to true.",
+				RemediationPatch:   "spec:\n    storageEncrypted: true",
+				GuideURL:           "https://edgarsilva948.github.io/ackrocheck/controls/ackro_aws_rds_001/",
 				References:         []policy.Reference{{Type: "aws_config", ID: "rds-storage-encrypted"}},
 			},
 			{
@@ -121,6 +123,62 @@ func TestWriteCLIQuiet(t *testing.T) {
 	}
 	if !strings.Contains(out, "AckroCheck summary:") {
 		t.Error("quiet mode should print the summary")
+	}
+}
+
+func TestWriteCLIRemediationAndGuide(t *testing.T) {
+	var buf bytes.Buffer
+	if err := WriteCLI(&buf, sampleReport(), CLIOptions{NoColor: true}); err != nil {
+		t.Fatal(err)
+	}
+	out := buf.String()
+	if !strings.Contains(out, "Apply:") || !strings.Contains(out, "storageEncrypted: true") {
+		t.Errorf("expected copy-paste fix block, got:\n%s", out)
+	}
+	if !strings.Contains(out, "Guide: https://edgarsilva948.github.io/ackrocheck/controls/ackro_aws_rds_001/") {
+		t.Errorf("expected guide link, got:\n%s", out)
+	}
+}
+
+func TestWriteCLIShowPassed(t *testing.T) {
+	r := sampleReport()
+	r.Passed = []scanner.PassedCheck{
+		{ControlID: "ACKRO_AWS_S3_001", Title: "S3 public access block", Severity: policy.SeverityHigh, ResourceKind: "Bucket", ResourceName: "ok-bucket", FilePath: "manifests/s3.yaml"},
+	}
+	r.Summary.Passed = 1
+
+	// Without ShowPassed: no PASSED lines, no Passed count.
+	var off bytes.Buffer
+	if err := WriteCLI(&off, r, CLIOptions{NoColor: true}); err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(off.String(), "PASSED") || strings.Contains(off.String(), "Passed:") {
+		t.Errorf("passed checks leaked without ShowPassed:\n%s", off.String())
+	}
+
+	// With ShowPassed: PASSED line and count appear.
+	var on bytes.Buffer
+	if err := WriteCLI(&on, r, CLIOptions{NoColor: true, ShowPassed: true}); err != nil {
+		t.Fatal(err)
+	}
+	out := on.String()
+	if !strings.Contains(out, "PASSED ACKRO_AWS_S3_001") {
+		t.Errorf("expected PASSED line, got:\n%s", out)
+	}
+	if !strings.Contains(out, "Passed: 1") {
+		t.Errorf("expected passed count in summary, got:\n%s", out)
+	}
+}
+
+func TestWriteCLIPassedColor(t *testing.T) {
+	r := sampleReport()
+	r.Passed = []scanner.PassedCheck{{ControlID: "X", Severity: policy.SeverityLow, ResourceKind: "K", ResourceName: "n"}}
+	var buf bytes.Buffer
+	if err := WriteCLI(&buf, r, CLIOptions{ShowPassed: true}); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(buf.String(), "\033[32m") {
+		t.Error("expected green color codes for PASSED")
 	}
 }
 

@@ -72,6 +72,35 @@ func TestBuiltinControlsLoad(t *testing.T) {
 	}
 }
 
+func TestIncludePassedCollectsPasses(t *testing.T) {
+	builtin, err := controls.Builtin()
+	if err != nil {
+		t.Fatal(err)
+	}
+	parsed, err := parser.ParsePaths([]string{testdata("pass", "data_secure.yaml")})
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Default: no passes collected.
+	off := New(builtin, Options{}).Scan(parsed)
+	if len(off.Passed) != 0 || off.Summary.Passed != 0 {
+		t.Errorf("passes collected without IncludePassed: %d", len(off.Passed))
+	}
+	// With IncludePassed: clean fixture yields passes, zero findings.
+	on := New(builtin, Options{IncludePassed: true}).Scan(parsed)
+	if len(on.Findings) != 0 {
+		t.Errorf("clean fixture produced findings: %+v", on.Findings)
+	}
+	if on.Summary.Passed == 0 || on.Summary.Passed != len(on.Passed) {
+		t.Errorf("passed summary %d != len %d", on.Summary.Passed, len(on.Passed))
+	}
+	for _, pc := range on.Passed {
+		if pc.ControlID == "" || pc.ResourceName == "" {
+			t.Errorf("incomplete passed check: %+v", pc)
+		}
+	}
+}
+
 func TestPassFixturesProduceNoFindings(t *testing.T) {
 	report := scanPath(t, Options{}, testdata("pass"))
 	if len(report.Findings) != 0 {

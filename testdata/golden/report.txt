@@ -1,15 +1,19 @@
-FAILED ACKRO_AWS_RDS_001 HIGH
-Resource: rds.services.k8s.aws/v1alpha1 DBInstance app-db
-File: manifests/db.yaml:2 (document 0)
-Reason: RDS DBInstance resources should explicitly enable encryption at rest.
-Fix: Set spec.storageEncrypted to true.
+FAILED ACKRO_AWS_RDS_001 HIGH  RDS DBInstance should enable storage encryption
+  Resource: rds.services.k8s.aws/v1alpha1 DBInstance app-db
+  File: manifests/db.yaml:2 (document 0)
+  Reason: RDS DBInstance resources should explicitly enable encryption at rest.
+  Fix: Set spec.storageEncrypted to true.
+  Apply:
+      spec:
+          storageEncrypted: true
+  Guide: https://edgarsilva948.github.io/ackrocheck/controls/ackro_aws_rds_001/
 
-WARNING ACKRO_AWS_RDS_003 MEDIUM
-Resource: rds.services.k8s.aws/v1alpha1 DBInstance stack-db
-Embedded in: ResourceGraphDefinition db-stack
-File: manifests/rgd.yaml (document 0)
-Reason: value is user-controlled via a templated expression
-Fix: Set spec.backupRetentionPeriod to 7 or more.
+WARNING ACKRO_AWS_RDS_003 MEDIUM  RDS DBInstance should retain backups for at least 7 days
+  Resource: rds.services.k8s.aws/v1alpha1 DBInstance stack-db
+  Embedded in: ResourceGraphDefinition db-stack
+  File: manifests/rgd.yaml (document 0)
+  Reason: value is user-controlled via a templated expression
+  Fix: Set spec.backupRetentionPeriod to 7 or more.
 
 PARSE ERROR manifests/broken.yaml: document 0: yaml: mapping values are not allowed in this context
 

@@ -8,6 +8,7 @@
     "medium": 1,
     "low": 0,
     "info": 0,
+    "passed": 0,
     "parse_errors": 0
   },
   "findings": [
@@ -26,6 +27,8 @@
       "line": 2,
       "message": "RDS DBInstance resources should explicitly enable encryption at rest.",
       "remediation": "Set spec.storageEncrypted to true.",
+      "remediation_patch": "spec:\n    storageEncrypted: true",
+      "guide_url": "https://edgarsilva948.github.io/ackrocheck/controls/ackro_aws_rds_001/",
       "references": [
         {
           "type": "aws_config",
