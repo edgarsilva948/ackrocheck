@@ -4,9 +4,103 @@
     {
       "name": "acm",
       "repo": "aws-controllers-k8s/acm-controller",
-      "release": "v1.4.0",
+      "release": "v1.8.1",
       "fullName": "AWS Certificate Manager",
       "kinds": [
+        {
+          "kind": "AcmeDomainValidation",
+          "group": "acm.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.acmeEndpointARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.acmeEndpointRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.acmeEndpointRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.domainName",
+              "type": "string"
+            },
+            {
+              "path": "spec.prevalidationOptions.dnsPrevalidation.domainScope.exactDomain",
+              "type": "string"
+            },
+            {
+              "path": "spec.prevalidationOptions.dnsPrevalidation.domainScope.subdomains",
+              "type": "string"
+            },
+            {
+              "path": "spec.prevalidationOptions.dnsPrevalidation.domainScope.wildcards",
+              "type": "string"
+            },
+            {
+              "path": "spec.prevalidationOptions.dnsPrevalidation.hostedZoneID",
+              "type": "string"
+            },
+            {
+              "path": "spec.prevalidationOptions.dnsPrevalidation.hostedZoneRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.prevalidationOptions.dnsPrevalidation.hostedZoneRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].value",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "kind": "AcmeEndpoint",
+          "group": "acm.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.authorizationBehavior",
+              "type": "string"
+            },
+            {
+              "path": "spec.certificateAuthority.publicCertificateAuthority.allowedKeyAlgorithms[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.certificateTags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.certificateTags[].value",
+              "type": "string"
+            },
+            {
+              "path": "spec.contact",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].value",
+              "type": "string"
+            }
+          ]
+        },
         {
           "kind": "Certificate",
           "group": "acm.services.k8s.aws",
@@ -83,7 +177,15 @@
               "type": "string"
             },
             {
+              "path": "spec.managedBy",
+              "type": "string"
+            },
+            {
               "path": "spec.options.certificateTransparencyLoggingPreference",
+              "type": "string"
+            },
+            {
+              "path": "spec.options.export",
               "type": "string"
             },
             {
@@ -117,7 +219,7 @@
     {
       "name": "acmpca",
       "repo": "aws-controllers-k8s/acmpca-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "AWS Private Certificate Authority",
       "kinds": [
         {
@@ -767,7 +869,7 @@
     {
       "name": "apigateway",
       "repo": "aws-controllers-k8s/apigateway-controller",
-      "release": "v1.5.0",
+      "release": "v1.8.1",
       "fullName": "Amazon API Gateway",
       "kinds": [
         {
@@ -859,6 +961,14 @@
               "type": "string"
             },
             {
+              "path": "spec.stageKeys[].restAPIRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.stageKeys[].restAPIRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.stageKeys[].stageName",
               "type": "string"
             },
@@ -945,6 +1055,14 @@
               "type": "string"
             },
             {
+              "path": "spec.authorizerCredentialsRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerCredentialsRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.authorizerResultTTLInSeconds",
               "type": "integer"
             },
@@ -966,6 +1084,14 @@
             },
             {
               "path": "spec.providerARNs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.providerRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.providerRefs[].from.namespace",
               "type": "string"
             },
             {
@@ -1087,11 +1213,23 @@
               "type": "string"
             },
             {
+              "path": "spec.credentialsRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.credentialsRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.httpMethod",
               "type": "string"
             },
             {
               "path": "spec.integrationHTTPMethod",
+              "type": "string"
+            },
+            {
+              "path": "spec.integrationTarget",
               "type": "string"
             },
             {
@@ -1116,6 +1254,10 @@
             },
             {
               "path": "spec.resourceRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.responseTransferMode",
               "type": "string"
             },
             {
@@ -1169,6 +1311,14 @@
             },
             {
               "path": "spec.authorizerID",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerRef.from.namespace",
               "type": "string"
             },
             {
@@ -1274,12 +1424,28 @@
               "type": "string"
             },
             {
+              "path": "spec.cloneFromRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.cloneFromRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.description",
               "type": "string"
             },
             {
               "path": "spec.disableExecuteAPIEndpoint",
               "type": "boolean"
+            },
+            {
+              "path": "spec.endpointAccessMode",
+              "type": "string"
+            },
+            {
+              "path": "spec.endpointConfiguration.ipAddressType",
+              "type": "string"
             },
             {
               "path": "spec.endpointConfiguration.types[]",
@@ -1307,6 +1473,10 @@
             },
             {
               "path": "spec.policy",
+              "type": "string"
+            },
+            {
+              "path": "spec.securityPolicy",
               "type": "string"
             },
             {
@@ -1352,6 +1522,14 @@
             },
             {
               "path": "spec.deploymentID",
+              "type": "string"
+            },
+            {
+              "path": "spec.deploymentRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.deploymentRef.from.namespace",
               "type": "string"
             },
             {
@@ -1414,6 +1592,14 @@
             {
               "path": "spec.targetARNs[]",
               "type": "string"
+            },
+            {
+              "path": "spec.targetRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.targetRefs[].from.namespace",
+              "type": "string"
             }
           ]
         }
@@ -1422,7 +1608,7 @@
     {
       "name": "apigatewayv2",
       "repo": "aws-controllers-k8s/apigatewayv2-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "Amazon API Gateway",
       "kinds": [
         {
@@ -1995,7 +2181,7 @@
     {
       "name": "applicationautoscaling",
       "repo": "aws-controllers-k8s/applicationautoscaling-controller",
-      "release": "v1.3.0",
+      "release": "v1.6.0",
       "fullName": "AWS Auto Scaling",
       "kinds": [
         {
@@ -2019,6 +2205,14 @@
             },
             {
               "path": "spec.roleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.namespace",
               "type": "string"
             },
             {
@@ -2060,6 +2254,14 @@
             },
             {
               "path": "spec.resourceID",
+              "type": "string"
+            },
+            {
+              "path": "spec.resourceRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.resourceRef.from.namespace",
               "type": "string"
             },
             {
@@ -2153,9 +2355,42 @@
     {
       "name": "athena",
       "repo": "aws-controllers-k8s/athena-controller",
-      "release": "v1.3.0",
+      "release": "v1.7.1",
       "fullName": "Amazon Athena",
       "kinds": [
+        {
+          "kind": "DataCatalog",
+          "group": "athena.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.description",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.parameters",
+              "type": "map"
+            },
+            {
+              "path": "spec.tags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].value",
+              "type": "string"
+            },
+            {
+              "path": "spec.type",
+              "type": "string"
+            }
+          ]
+        },
         {
           "kind": "PreparedStatement",
           "group": "athena.services.k8s.aws",
@@ -2177,6 +2412,14 @@
             },
             {
               "path": "spec.workGroup",
+              "type": "string"
+            },
+            {
+              "path": "spec.workGroupRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.workGroupRef.from.namespace",
               "type": "string"
             }
           ]
@@ -2201,6 +2444,14 @@
               "type": "string"
             },
             {
+              "path": "spec.configuration.customerContentEncryptionConfiguration.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.configuration.customerContentEncryptionConfiguration.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.configuration.enableMinimumEncryptionConfiguration",
               "type": "boolean"
             },
@@ -2221,11 +2472,35 @@
               "type": "string"
             },
             {
+              "path": "spec.configuration.executionRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.configuration.executionRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.configuration.identityCenterConfiguration.enableIdentityCenter",
               "type": "boolean"
             },
             {
               "path": "spec.configuration.identityCenterConfiguration.identityCenterInstanceARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.configuration.managedQueryResultsConfiguration.enabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.configuration.managedQueryResultsConfiguration.encryptionConfiguration.kmsKey",
+              "type": "string"
+            },
+            {
+              "path": "spec.configuration.managedQueryResultsConfiguration.encryptionConfiguration.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.configuration.managedQueryResultsConfiguration.encryptionConfiguration.kmsKeyRef.from.namespace",
               "type": "string"
             },
             {
@@ -2261,6 +2536,14 @@
               "type": "string"
             },
             {
+              "path": "spec.configuration.resultConfiguration.encryptionConfiguration.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.configuration.resultConfiguration.encryptionConfiguration.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.configuration.resultConfiguration.expectedBucketOwner",
               "type": "string"
             },
@@ -2291,7 +2574,7 @@
     {
       "name": "autoscaling",
       "repo": "aws-controllers-k8s/autoscaling-controller",
-      "release": "v0.2.0",
+      "release": "v1.2.1",
       "fullName": "Amazon EC2 Auto Scaling",
       "kinds": [
         {
@@ -2327,6 +2610,14 @@
             },
             {
               "path": "spec.capacityReservationSpecification.capacityReservationTarget.capacityReservationIDs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.capacityReservationSpecification.capacityReservationTarget.capacityReservationRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.capacityReservationSpecification.capacityReservationTarget.capacityReservationRefs[].from.namespace",
               "type": "string"
             },
             {
@@ -2704,7 +2995,7 @@
     {
       "name": "backup",
       "repo": "aws-controllers-k8s/backup-controller",
-      "release": "v0.2.0",
+      "release": "v1.1.1",
       "fullName": "AWS Backup",
       "kinds": [
         {
@@ -2827,6 +3118,14 @@
               "type": "string"
             },
             {
+              "path": "spec.rules[].targetLogicallyAirGappedBackupVaultRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.rules[].targetLogicallyAirGappedBackupVaultRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.scanSettings[].malwareScanner",
               "type": "string"
             },
@@ -2836,6 +3135,14 @@
             },
             {
               "path": "spec.scanSettings[].scannerRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.scanSettings[].scannerRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.scanSettings[].scannerRoleRef.from.namespace",
               "type": "string"
             },
             {
@@ -2973,7 +3280,7 @@
     {
       "name": "bedrock",
       "repo": "aws-controllers-k8s/bedrock-controller",
-      "release": "v1.2.0",
+      "release": "v1.3.1",
       "fullName": "Amazon Bedrock",
       "kinds": [
         {
@@ -3010,7 +3317,7 @@
     {
       "name": "bedrockagent",
       "repo": "aws-controllers-k8s/bedrockagent-controller",
-      "release": "v1.2.0",
+      "release": "v1.3.1",
       "fullName": "Agents for Amazon Bedrock",
       "kinds": [
         {
@@ -3147,7 +3454,7 @@
     {
       "name": "bedrockagentcorecontrol",
       "repo": "aws-controllers-k8s/bedrockagentcorecontrol-controller",
-      "release": "v1.8.0",
+      "release": "v1.14.0",
       "fullName": "Amazon Bedrock Agent Core Control",
       "kinds": [
         {
@@ -3455,6 +3762,27 @@
           ]
         },
         {
+          "kind": "BrowserProfile",
+          "group": "bedrockagentcorecontrol.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.description",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
+            }
+          ]
+        },
+        {
           "kind": "CodeInterpreter",
           "group": "bedrockagentcorecontrol.services.k8s.aws",
           "versions": [
@@ -3732,6 +4060,58 @@
               "type": "string"
             },
             {
+              "path": "spec.privateEndpoint.managedVPCResource.endpointIPAddressType",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.routingDomain",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.securityGroupIDs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.securityGroupRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.securityGroupRefs[].from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.subnetIDs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.subnetRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.subnetRefs[].from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.tags",
+              "type": "map"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.vpcIdentifier",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.vpcIdentifierRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.managedVPCResource.vpcIdentifierRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.privateEndpoint.selfManagedLatticeResource.resourceConfigurationIdentifier",
+              "type": "string"
+            },
+            {
               "path": "spec.targetConfiguration.mcp.apiGateway.apiGatewayToolConfiguration.toolFilters[].filterPath",
               "type": "string"
             },
@@ -3825,6 +4205,440 @@
             },
             {
               "path": "spec.targetConfiguration.mcp.smithyModel.s3.uri",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "kind": "Harness",
+          "group": "bedrockagentcorecontrol.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.allowedTools[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerConfiguration.customJWTAuthorizer.allowedAudience[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerConfiguration.customJWTAuthorizer.allowedClients[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerConfiguration.customJWTAuthorizer.allowedScopes[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerConfiguration.customJWTAuthorizer.customClaims[].authorizingClaimMatchValue.claimMatchOperator",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerConfiguration.customJWTAuthorizer.customClaims[].authorizingClaimMatchValue.claimMatchValue.matchValueString",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerConfiguration.customJWTAuthorizer.customClaims[].authorizingClaimMatchValue.claimMatchValue.matchValueStringList[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerConfiguration.customJWTAuthorizer.customClaims[].inboundTokenClaimName",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerConfiguration.customJWTAuthorizer.customClaims[].inboundTokenClaimValueType",
+              "type": "string"
+            },
+            {
+              "path": "spec.authorizerConfiguration.customJWTAuthorizer.discoveryURL",
+              "type": "string"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.filesystemConfigurations[].sessionStorage.mountPath",
+              "type": "string"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.lifecycleConfiguration.idleRuntimeSessionTimeout",
+              "type": "integer"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.lifecycleConfiguration.maxLifetime",
+              "type": "integer"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.networkConfiguration.networkMode",
+              "type": "string"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.networkConfiguration.networkModeConfig.securityGroupRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.networkConfiguration.networkModeConfig.securityGroupRefs[].from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.networkConfiguration.networkModeConfig.securityGroups[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.networkConfiguration.networkModeConfig.subnetRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.networkConfiguration.networkModeConfig.subnetRefs[].from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.environment.agentCoreRuntimeEnvironment.networkConfiguration.networkModeConfig.subnets[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.environmentArtifact.containerConfiguration.containerURI",
+              "type": "string"
+            },
+            {
+              "path": "spec.environmentVariables",
+              "type": "map"
+            },
+            {
+              "path": "spec.executionRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.executionRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.executionRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.harnessName",
+              "type": "string"
+            },
+            {
+              "path": "spec.maxIterations",
+              "type": "integer"
+            },
+            {
+              "path": "spec.maxTokens",
+              "type": "integer"
+            },
+            {
+              "path": "spec.memory.agentCoreMemoryConfiguration.actorID",
+              "type": "string"
+            },
+            {
+              "path": "spec.memory.agentCoreMemoryConfiguration.arn",
+              "type": "string"
+            },
+            {
+              "path": "spec.memory.agentCoreMemoryConfiguration.messagesCount",
+              "type": "integer"
+            },
+            {
+              "path": "spec.memory.agentCoreMemoryConfiguration.retrievalConfig",
+              "type": "map"
+            },
+            {
+              "path": "spec.memory.disabled",
+              "type": "map"
+            },
+            {
+              "path": "spec.memory.managedMemoryConfiguration.arn",
+              "type": "string"
+            },
+            {
+              "path": "spec.memory.managedMemoryConfiguration.encryptionKeyARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.memory.managedMemoryConfiguration.encryptionKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.memory.managedMemoryConfiguration.encryptionKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.memory.managedMemoryConfiguration.eventExpiryDuration",
+              "type": "integer"
+            },
+            {
+              "path": "spec.memory.managedMemoryConfiguration.strategies[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.bedrockModelConfig.apiFormat",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.bedrockModelConfig.maxTokens",
+              "type": "integer"
+            },
+            {
+              "path": "spec.model.bedrockModelConfig.modelID",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.bedrockModelConfig.temperature",
+              "type": "number"
+            },
+            {
+              "path": "spec.model.bedrockModelConfig.topP",
+              "type": "number"
+            },
+            {
+              "path": "spec.model.geminiModelConfig.apiKeyARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.geminiModelConfig.maxTokens",
+              "type": "integer"
+            },
+            {
+              "path": "spec.model.geminiModelConfig.modelID",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.geminiModelConfig.temperature",
+              "type": "number"
+            },
+            {
+              "path": "spec.model.geminiModelConfig.topK",
+              "type": "integer"
+            },
+            {
+              "path": "spec.model.geminiModelConfig.topP",
+              "type": "number"
+            },
+            {
+              "path": "spec.model.liteLlmModelConfig.apiBase",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.liteLlmModelConfig.apiKeyARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.liteLlmModelConfig.maxTokens",
+              "type": "integer"
+            },
+            {
+              "path": "spec.model.liteLlmModelConfig.modelID",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.liteLlmModelConfig.temperature",
+              "type": "number"
+            },
+            {
+              "path": "spec.model.liteLlmModelConfig.topP",
+              "type": "number"
+            },
+            {
+              "path": "spec.model.openAiModelConfig.apiFormat",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.openAiModelConfig.apiKeyARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.openAiModelConfig.maxTokens",
+              "type": "integer"
+            },
+            {
+              "path": "spec.model.openAiModelConfig.modelID",
+              "type": "string"
+            },
+            {
+              "path": "spec.model.openAiModelConfig.temperature",
+              "type": "number"
+            },
+            {
+              "path": "spec.model.openAiModelConfig.topP",
+              "type": "number"
+            },
+            {
+              "path": "spec.skills[].awsSkills.paths[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.skills[].git.auth.credentialARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.skills[].git.auth.username",
+              "type": "string"
+            },
+            {
+              "path": "spec.skills[].git.path",
+              "type": "string"
+            },
+            {
+              "path": "spec.skills[].git.url",
+              "type": "string"
+            },
+            {
+              "path": "spec.skills[].path",
+              "type": "string"
+            },
+            {
+              "path": "spec.skills[].s3.uri",
+              "type": "string"
+            },
+            {
+              "path": "spec.systemPrompt[].text",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
+            },
+            {
+              "path": "spec.timeoutSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreBrowser.browserARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreBrowser.browserRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreBrowser.browserRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreCodeInterpreter.codeInterpreterARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreCodeInterpreter.codeInterpreterRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreCodeInterpreter.codeInterpreterRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.gatewayARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.gatewayRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.gatewayRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.outboundAuth.awsIAM",
+              "type": "map"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.outboundAuth.none",
+              "type": "map"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.outboundAuth.oauth.customParameters",
+              "type": "map"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.outboundAuth.oauth.defaultReturnURL",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.outboundAuth.oauth.grantType",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.outboundAuth.oauth.providerARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.agentCoreGateway.outboundAuth.oauth.scopes[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.inlineFunction.description",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].config.remoteMcp.url",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tools[].type",
+              "type": "string"
+            },
+            {
+              "path": "spec.truncation.config.slidingWindow.messagesCount",
+              "type": "integer"
+            },
+            {
+              "path": "spec.truncation.config.summarization.preserveRecentMessages",
+              "type": "integer"
+            },
+            {
+              "path": "spec.truncation.config.summarization.summarizationSystemPrompt",
+              "type": "string"
+            },
+            {
+              "path": "spec.truncation.config.summarization.summaryRatio",
+              "type": "number"
+            },
+            {
+              "path": "spec.truncation.strategy",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "kind": "HarnessEndpoint",
+          "group": "bedrockagentcorecontrol.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.description",
+              "type": "string"
+            },
+            {
+              "path": "spec.harnessID",
+              "type": "string"
+            },
+            {
+              "path": "spec.harnessRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.harnessRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
+            },
+            {
+              "path": "spec.targetVersion",
               "type": "string"
             }
           ]
@@ -4083,6 +4897,80 @@
           ]
         },
         {
+          "kind": "Policy",
+          "group": "bedrockagentcorecontrol.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.definition.cedar.statement",
+              "type": "string"
+            },
+            {
+              "path": "spec.description",
+              "type": "string"
+            },
+            {
+              "path": "spec.enforcementMode",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.policyEngineID",
+              "type": "string"
+            },
+            {
+              "path": "spec.policyEngineRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.policyEngineRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.validationMode",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "kind": "PolicyEngine",
+          "group": "bedrockagentcorecontrol.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.description",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionKeyARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
+            }
+          ]
+        },
+        {
           "kind": "WorkloadIdentity",
           "group": "bedrockagentcorecontrol.services.k8s.aws",
           "versions": [
@@ -4120,7 +5008,7 @@
     {
       "name": "cloudfront",
       "repo": "aws-controllers-k8s/cloudfront-controller",
-      "release": "v1.5.0",
+      "release": "v1.7.1",
       "fullName": "Amazon CloudFront",
       "kinds": [
         {
@@ -4180,6 +5068,39 @@
             },
             {
               "path": "spec.cachePolicyConfig.parametersInCacheKeyAndForwardedToOrigin.queryStringsConfig.queryStrings.items[]",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "kind": "ConnectionGroup",
+          "group": "cloudfront.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.anycastIPListID",
+              "type": "string"
+            },
+            {
+              "path": "spec.enabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.ipv6Enabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].value",
               "type": "string"
             }
           ]
@@ -4702,6 +5623,99 @@
           ]
         },
         {
+          "kind": "DistributionTenant",
+          "group": "cloudfront.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.connectionGroupID",
+              "type": "string"
+            },
+            {
+              "path": "spec.connectionGroupRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.connectionGroupRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.customizations.certificate.arn",
+              "type": "string"
+            },
+            {
+              "path": "spec.customizations.geoRestrictions.locations[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.customizations.geoRestrictions.restrictionType",
+              "type": "string"
+            },
+            {
+              "path": "spec.customizations.webACL.action",
+              "type": "string"
+            },
+            {
+              "path": "spec.customizations.webACL.arn",
+              "type": "string"
+            },
+            {
+              "path": "spec.distributionID",
+              "type": "string"
+            },
+            {
+              "path": "spec.distributionRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.distributionRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.domains[].domain",
+              "type": "string"
+            },
+            {
+              "path": "spec.enabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.managedCertificateRequest.certificateTransparencyLoggingPreference",
+              "type": "string"
+            },
+            {
+              "path": "spec.managedCertificateRequest.primaryDomainName",
+              "type": "string"
+            },
+            {
+              "path": "spec.managedCertificateRequest.validationTokenHost",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.parameters[].name",
+              "type": "string"
+            },
+            {
+              "path": "spec.parameters[].value",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].value",
+              "type": "string"
+            }
+          ]
+        },
+        {
           "kind": "Function",
           "group": "cloudfront.services.k8s.aws",
           "versions": [
@@ -4971,7 +5985,7 @@
     {
       "name": "cloudtrail",
       "repo": "aws-controllers-k8s/cloudtrail-controller",
-      "release": "v1.3.0",
+      "release": "v1.6.0",
       "fullName": "AWS CloudTrail",
       "kinds": [
         {
@@ -5059,6 +6073,14 @@
               "type": "string"
             },
             {
+              "path": "spec.cloudWatchLogsRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.cloudWatchLogsRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.enableLogFileValidation",
               "type": "boolean"
             },
@@ -5079,11 +6101,27 @@
               "type": "string"
             },
             {
+              "path": "spec.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.name",
               "type": "string"
             },
             {
               "path": "spec.s3BucketName",
+              "type": "string"
+            },
+            {
+              "path": "spec.s3BucketRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.s3BucketRef.from.namespace",
               "type": "string"
             },
             {
@@ -5109,7 +6147,7 @@
     {
       "name": "cloudwatch",
       "repo": "aws-controllers-k8s/cloudwatch-controller",
-      "release": "v1.5.0",
+      "release": "v1.8.1",
       "fullName": "Amazon CloudWatch",
       "kinds": [
         {
@@ -5169,8 +6207,32 @@
               "type": "string"
             },
             {
+              "path": "spec.evaluationCriteria.promQLCriteria.pendingPeriod",
+              "type": "integer"
+            },
+            {
+              "path": "spec.evaluationCriteria.promQLCriteria.query",
+              "type": "string"
+            },
+            {
+              "path": "spec.evaluationCriteria.promQLCriteria.recoveryPeriod",
+              "type": "integer"
+            },
+            {
+              "path": "spec.evaluationInterval",
+              "type": "integer"
+            },
+            {
               "path": "spec.evaluationPeriods",
               "type": "integer"
+            },
+            {
+              "path": "spec.evaluationWindow.slidingWindow",
+              "type": "map"
+            },
+            {
+              "path": "spec.evaluationWindow.wallClockWindow.timezone",
+              "type": "string"
             },
             {
               "path": "spec.extendedStatistic",
@@ -5302,6 +6364,14 @@
               "type": "string"
             },
             {
+              "path": "spec.firehoseRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.firehoseRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.includeFilters[].metricNames[]",
               "type": "string"
             },
@@ -5323,6 +6393,14 @@
             },
             {
               "path": "spec.roleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.namespace",
               "type": "string"
             },
             {
@@ -5358,7 +6436,7 @@
     {
       "name": "cloudwatchlogs",
       "repo": "aws-controllers-k8s/cloudwatchlogs-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "Amazon CloudWatch Logs",
       "kinds": [
         {
@@ -5419,7 +6497,7 @@
     {
       "name": "codeartifact",
       "repo": "aws-controllers-k8s/codeartifact-controller",
-      "release": "v1.3.0",
+      "release": "v1.6.1",
       "fullName": "CodeArtifact",
       "kinds": [
         {
@@ -5431,6 +6509,14 @@
           "fields": [
             {
               "path": "spec.encryptionKey",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionKeyRef.from.namespace",
               "type": "string"
             },
             {
@@ -5471,6 +6557,14 @@
               "type": "string"
             },
             {
+              "path": "spec.domainRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.domainRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.pattern",
               "type": "string"
             },
@@ -5495,7 +6589,7 @@
     {
       "name": "cognitoidentityprovider",
       "repo": "aws-controllers-k8s/cognitoidentityprovider-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "Amazon Cognito Identity Provider",
       "kinds": [
         {
@@ -5792,7 +6886,7 @@
     {
       "name": "dms",
       "repo": "aws-controllers-k8s/dms-controller",
-      "release": "",
+      "release": "v0.1.0",
       "fullName": "AWS Database Migration Service",
       "kinds": [
         {
@@ -7606,6 +8700,184 @@
           ]
         },
         {
+          "kind": "EventSubscription",
+          "group": "dms.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.enabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.eventCategories[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.snsTopicARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.snsTopicRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.snsTopicRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.sourceIDs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.sourceType",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].value",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "kind": "ReplicationInstance",
+          "group": "dms.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.allocatedStorage",
+              "type": "integer"
+            },
+            {
+              "path": "spec.autoMinorVersionUpgrade",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.availabilityZone",
+              "type": "string"
+            },
+            {
+              "path": "spec.dnsNameServers",
+              "type": "string"
+            },
+            {
+              "path": "spec.engineVersion",
+              "type": "string"
+            },
+            {
+              "path": "spec.instanceClass",
+              "type": "string"
+            },
+            {
+              "path": "spec.kerberosAuthenticationSettings.keyCacheSecretIAMARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.kerberosAuthenticationSettings.keyCacheSecretIAMRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.kerberosAuthenticationSettings.keyCacheSecretIAMRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.kerberosAuthenticationSettings.keyCacheSecretID",
+              "type": "string"
+            },
+            {
+              "path": "spec.kerberosAuthenticationSettings.keyCacheSecretRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.kerberosAuthenticationSettings.keyCacheSecretRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.kerberosAuthenticationSettings.krb5FileContents",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyID",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.multiAZ",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.networkType",
+              "type": "string"
+            },
+            {
+              "path": "spec.preferredMaintenanceWindow",
+              "type": "string"
+            },
+            {
+              "path": "spec.publiclyAccessible",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.resourceIdentifier",
+              "type": "string"
+            },
+            {
+              "path": "spec.securityGroupIDs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.securityGroupRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.securityGroupRefs[].from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.subnetGroupID",
+              "type": "string"
+            },
+            {
+              "path": "spec.subnetGroupRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.subnetGroupRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].value",
+              "type": "string"
+            }
+          ]
+        },
+        {
           "kind": "ReplicationSubnetGroup",
           "group": "dms.services.k8s.aws",
           "versions": [
@@ -7641,13 +8913,106 @@
               "type": "string"
             }
           ]
+        },
+        {
+          "kind": "ReplicationTask",
+          "group": "dms.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.cdcStartPosition",
+              "type": "string"
+            },
+            {
+              "path": "spec.cdcStartTime",
+              "type": "string"
+            },
+            {
+              "path": "spec.cdcStopPosition",
+              "type": "string"
+            },
+            {
+              "path": "spec.migrationType",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.replicationInstanceARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.replicationInstanceRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.replicationInstanceRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.resourceIdentifier",
+              "type": "string"
+            },
+            {
+              "path": "spec.sourceEndpointARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.sourceEndpointRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.sourceEndpointRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.startReplicationTask",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.tableMappings",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags[].value",
+              "type": "string"
+            },
+            {
+              "path": "spec.targetEndpointARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.targetEndpointRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.targetEndpointRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.taskData",
+              "type": "string"
+            },
+            {
+              "path": "spec.taskSettings",
+              "type": "string"
+            }
+          ]
         }
       ]
     },
     {
       "name": "documentdb",
       "repo": "aws-controllers-k8s/documentdb-controller",
-      "release": "v1.4.0",
+      "release": "v1.6.0",
       "fullName": "Amazon DocumentDB",
       "kinds": [
         {
@@ -7847,6 +9212,14 @@
               "type": "string"
             },
             {
+              "path": "spec.dbClusterIdentifierRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.dbClusterIdentifierRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.dbInstanceClass",
               "type": "string"
             },
@@ -7940,7 +9313,7 @@
     {
       "name": "dsql",
       "repo": "aws-controllers-k8s/dsql-controller",
-      "release": "v0.1.0",
+      "release": "v1.1.1",
       "fullName": "Amazon Aurora DSQL",
       "kinds": [
         {
@@ -7989,7 +9362,7 @@
     {
       "name": "dynamodb",
       "repo": "aws-controllers-k8s/dynamodb-controller",
-      "release": "v1.9.0",
+      "release": "v1.10.1",
       "fullName": "Amazon DynamoDB",
       "kinds": [
         {
@@ -8231,7 +9604,7 @@
     {
       "name": "ec2",
       "repo": "aws-controllers-k8s/ec2-controller",
-      "release": "v1.15.0",
+      "release": "v1.20.0",
       "fullName": "Amazon Elastic Cloud Compute",
       "kinds": [
         {
@@ -8463,6 +9836,14 @@
             },
             {
               "path": "spec.logGroupName",
+              "type": "string"
+            },
+            {
+              "path": "spec.logGroupRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.logGroupRef.from.namespace",
               "type": "string"
             },
             {
@@ -8861,6 +10242,10 @@
             {
               "path": "spec.securityGroups[]",
               "type": "string"
+            },
+            {
+              "path": "spec.sourceDestCheckEnabled",
+              "type": "boolean"
             },
             {
               "path": "spec.subnetID",
@@ -9406,6 +10791,18 @@
             },
             {
               "path": "spec.data.securityGroups[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.data.tagSpecifications[].resourceType",
+              "type": "string"
+            },
+            {
+              "path": "spec.data.tagSpecifications[].tags[].key",
+              "type": "string"
+            },
+            {
+              "path": "spec.data.tagSpecifications[].tags[].value",
               "type": "string"
             },
             {
@@ -10255,6 +11652,14 @@
               "type": "string"
             },
             {
+              "path": "spec.dnsOptions.privateDNSPreference",
+              "type": "string"
+            },
+            {
+              "path": "spec.dnsOptions.privateDNSSpecifiedDomains[]",
+              "type": "string"
+            },
+            {
               "path": "spec.ipAddressType",
               "type": "string"
             },
@@ -10296,6 +11701,14 @@
             },
             {
               "path": "spec.serviceNetworkARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.serviceRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.serviceRef.from.namespace",
               "type": "string"
             },
             {
@@ -10360,7 +11773,23 @@
               "type": "string"
             },
             {
+              "path": "spec.gatewayLoadBalancerRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.gatewayLoadBalancerRefs[].from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.networkLoadBalancerARNs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.networkLoadBalancerRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.networkLoadBalancerRefs[].from.namespace",
               "type": "string"
             },
             {
@@ -10467,7 +11896,7 @@
     {
       "name": "ecr",
       "repo": "aws-controllers-k8s/ecr-controller",
-      "release": "v1.6.1",
+      "release": "v1.8.1",
       "fullName": "Amazon Elastic Container Registry",
       "kinds": [
         {
@@ -10536,6 +11965,14 @@
             },
             {
               "path": "spec.encryptionConfiguration.kmsKey",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.namespace",
               "type": "string"
             },
             {
@@ -10616,6 +12053,14 @@
               "type": "string"
             },
             {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.imageTagMutability",
               "type": "string"
             },
@@ -10654,7 +12099,7 @@
     {
       "name": "ecrpublic",
       "repo": "aws-controllers-k8s/ecrpublic-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "Amazon Elastic Container Registry Public",
       "kinds": [
         {
@@ -10683,7 +12128,7 @@
     {
       "name": "ecs",
       "repo": "aws-controllers-k8s/ecs-controller",
-      "release": "v1.4.0",
+      "release": "v1.5.1",
       "fullName": "Amazon Elastic Container Service",
       "kinds": [
         {
@@ -11891,7 +13336,7 @@
     {
       "name": "efs",
       "repo": "aws-controllers-k8s/efs-controller",
-      "release": "v1.3.0",
+      "release": "v1.5.1",
       "fullName": "Amazon Elastic File System",
       "kinds": [
         {
@@ -12126,7 +13571,7 @@
     {
       "name": "eks",
       "repo": "aws-controllers-k8s/eks-controller",
-      "release": "v1.15.0",
+      "release": "v1.20.0",
       "fullName": "Amazon Elastic Kubernetes Service",
       "kinds": [
         {
@@ -12222,6 +13667,14 @@
               "type": "string"
             },
             {
+              "path": "spec.podIdentityAssociations[].roleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.podIdentityAssociations[].roleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.podIdentityAssociations[].serviceAccount",
               "type": "string"
             },
@@ -12256,6 +13709,14 @@
           "fields": [
             {
               "path": "spec.clusterName",
+              "type": "string"
+            },
+            {
+              "path": "spec.clusterRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.clusterRef.from.namespace",
               "type": "string"
             },
             {
@@ -12352,6 +13813,14 @@
               "type": "string"
             },
             {
+              "path": "spec.controlPlaneScalingConfig.tier",
+              "type": "string"
+            },
+            {
+              "path": "spec.deletionProtection",
+              "type": "boolean"
+            },
+            {
               "path": "spec.encryptionConfig[].provider.keyARN",
               "type": "string"
             },
@@ -12365,6 +13834,34 @@
             },
             {
               "path": "spec.encryptionConfig[].resources[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.kubeAPIServerConfig.eventTTL",
+              "type": "string"
+            },
+            {
+              "path": "spec.kubeAPIServerConfig.serviceNodePortRange.maxPort",
+              "type": "integer"
+            },
+            {
+              "path": "spec.kubeAPIServerConfig.serviceNodePortRange.minPort",
+              "type": "integer"
+            },
+            {
+              "path": "spec.kubeControllerManagerConfig.horizontalPodAutoscalerControllerConfig.horizontalPodAutoscalerSyncPeriod",
+              "type": "string"
+            },
+            {
+              "path": "spec.kubeSchedulerConfig.nodeResourcesFit.scoringStrategy.resources[].name",
+              "type": "string"
+            },
+            {
+              "path": "spec.kubeSchedulerConfig.nodeResourcesFit.scoringStrategy.resources[].weight",
+              "type": "integer"
+            },
+            {
+              "path": "spec.kubeSchedulerConfig.nodeResourcesFit.scoringStrategy.type",
               "type": "string"
             },
             {
@@ -12806,6 +14303,14 @@
             {
               "path": "spec.targetRoleARN",
               "type": "string"
+            },
+            {
+              "path": "spec.targetRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.targetRoleRef.from.namespace",
+              "type": "string"
             }
           ]
         }
@@ -12814,7 +14319,7 @@
     {
       "name": "elasticache",
       "repo": "aws-controllers-k8s/elasticache-controller",
-      "release": "v1.4.0",
+      "release": "v1.8.0",
       "fullName": "Amazon ElastiCache",
       "kinds": [
         {
@@ -13168,6 +14673,10 @@
               "type": "string"
             },
             {
+              "path": "spec.durability",
+              "type": "string"
+            },
+            {
               "path": "spec.engine",
               "type": "string"
             },
@@ -13181,6 +14690,14 @@
             },
             {
               "path": "spec.kmsKeyID",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.namespace",
               "type": "string"
             },
             {
@@ -13248,6 +14765,14 @@
               "type": "string"
             },
             {
+              "path": "spec.notificationTopicRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.notificationTopicRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.numNodeGroups",
               "type": "integer"
             },
@@ -13296,6 +14821,14 @@
               "type": "string"
             },
             {
+              "path": "spec.snapshotRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.snapshotRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.snapshotRetentionLimit",
               "type": "integer"
             },
@@ -13317,6 +14850,14 @@
             },
             {
               "path": "spec.userGroupIDs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.userGroupRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.userGroupRefs[].from.namespace",
               "type": "string"
             }
           ]
@@ -13362,6 +14903,14 @@
             },
             {
               "path": "spec.kmsKeyID",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.namespace",
               "type": "string"
             },
             {
@@ -13414,6 +14963,14 @@
             },
             {
               "path": "spec.userGroupID",
+              "type": "string"
+            },
+            {
+              "path": "spec.userGroupRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.userGroupRef.from.namespace",
               "type": "string"
             }
           ]
@@ -13475,11 +15032,35 @@
               "type": "string"
             },
             {
+              "path": "spec.cacheClusterRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.cacheClusterRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.kmsKeyID",
               "type": "string"
             },
             {
+              "path": "spec.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.replicationGroupID",
+              "type": "string"
+            },
+            {
+              "path": "spec.replicationGroupRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.replicationGroupRef.from.namespace",
               "type": "string"
             },
             {
@@ -13488,6 +15069,14 @@
             },
             {
               "path": "spec.sourceSnapshotName",
+              "type": "string"
+            },
+            {
+              "path": "spec.sourceSnapshotRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.sourceSnapshotRef.from.namespace",
               "type": "string"
             },
             {
@@ -13591,6 +15180,14 @@
             {
               "path": "spec.userIDs[]",
               "type": "string"
+            },
+            {
+              "path": "spec.userRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.userRefs[].from.namespace",
+              "type": "string"
             }
           ]
         }
@@ -13599,7 +15196,7 @@
     {
       "name": "elbv2",
       "repo": "aws-controllers-k8s/elbv2-controller",
-      "release": "v1.5.0",
+      "release": "v1.6.1",
       "fullName": "Elastic Load Balancing",
       "kinds": [
         {
@@ -14275,7 +15872,7 @@
     {
       "name": "emrcontainers",
       "repo": "aws-controllers-k8s/emrcontainers-controller",
-      "release": "v1.4.0",
+      "release": "v1.6.1",
       "fullName": "Amazon EMR on EKS",
       "kinds": [
         {
@@ -14291,6 +15888,14 @@
             },
             {
               "path": "spec.executionRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.executionRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.executionRoleRef.from.namespace",
               "type": "string"
             },
             {
@@ -14365,7 +15970,7 @@
     {
       "name": "emrserverless",
       "repo": "aws-controllers-k8s/emrserverless-controller",
-      "release": "v0.2.0",
+      "release": "v1.1.1",
       "fullName": "Amazon EMR Serverless",
       "kinds": [
         {
@@ -14578,7 +16183,7 @@
     {
       "name": "eventbridge",
       "repo": "aws-controllers-k8s/eventbridge-controller",
-      "release": "v1.3.0",
+      "release": "v1.5.1",
       "fullName": "Amazon EventBridge",
       "kinds": [
         {
@@ -14643,6 +16248,14 @@
             },
             {
               "path": "spec.roleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.namespace",
               "type": "string"
             },
             {
@@ -14713,6 +16326,14 @@
             },
             {
               "path": "spec.roleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.namespace",
               "type": "string"
             },
             {
@@ -14942,7 +16563,7 @@
     {
       "name": "firehose",
       "repo": "aws-controllers-k8s/firehose-controller",
-      "release": "v0.3.0",
+      "release": "v0.4.1",
       "fullName": "Amazon Kinesis Data Firehose",
       "kinds": [
         {
@@ -15185,7 +16806,7 @@
     {
       "name": "glue",
       "repo": "aws-controllers-k8s/glue-controller",
-      "release": "v0.4.0",
+      "release": "v1.1.1",
       "fullName": "AWS Glue",
       "kinds": [
         {
@@ -15346,7 +16967,7 @@
     {
       "name": "iam",
       "repo": "aws-controllers-k8s/iam-controller",
-      "release": "v1.7.1",
+      "release": "v1.8.1",
       "fullName": "AWS Identity \u0026 Access Management",
       "kinds": [
         {
@@ -15625,7 +17246,7 @@
     {
       "name": "kafka",
       "repo": "aws-controllers-k8s/kafka-controller",
-      "release": "v1.6.1",
+      "release": "v1.11.1",
       "fullName": "Amazon Managed Streaming for Apache Kafka",
       "kinds": [
         {
@@ -15672,7 +17293,27 @@
               "type": "string"
             },
             {
+              "path": "spec.brokerNodeGroupInfo.connectivityInfo.vpcConnectivity.clientAuthentication.sasl.iam.enabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.brokerNodeGroupInfo.connectivityInfo.vpcConnectivity.clientAuthentication.sasl.scram.enabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.brokerNodeGroupInfo.connectivityInfo.vpcConnectivity.clientAuthentication.tls.enabled",
+              "type": "boolean"
+            },
+            {
               "path": "spec.brokerNodeGroupInfo.instanceType",
+              "type": "string"
+            },
+            {
+              "path": "spec.brokerNodeGroupInfo.securityGroupRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.brokerNodeGroupInfo.securityGroupRefs[].from.namespace",
               "type": "string"
             },
             {
@@ -15784,6 +17425,10 @@
               "type": "boolean"
             },
             {
+              "path": "spec.policy",
+              "type": "string"
+            },
+            {
               "path": "spec.rebalancing.status",
               "type": "string"
             },
@@ -15846,6 +17491,10 @@
               "type": "string"
             },
             {
+              "path": "spec.policy",
+              "type": "string"
+            },
+            {
               "path": "spec.provisioned.brokerNodeGroupInfo.brokerAZDistribution",
               "type": "string"
             },
@@ -15870,7 +17519,27 @@
               "type": "string"
             },
             {
+              "path": "spec.provisioned.brokerNodeGroupInfo.connectivityInfo.vpcConnectivity.clientAuthentication.sasl.iam.enabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.provisioned.brokerNodeGroupInfo.connectivityInfo.vpcConnectivity.clientAuthentication.sasl.scram.enabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.provisioned.brokerNodeGroupInfo.connectivityInfo.vpcConnectivity.clientAuthentication.tls.enabled",
+              "type": "boolean"
+            },
+            {
               "path": "spec.provisioned.brokerNodeGroupInfo.instanceType",
+              "type": "string"
+            },
+            {
+              "path": "spec.provisioned.brokerNodeGroupInfo.securityGroupRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.provisioned.brokerNodeGroupInfo.securityGroupRefs[].from.namespace",
               "type": "string"
             },
             {
@@ -16002,13 +17671,78 @@
               "type": "map"
             }
           ]
+        },
+        {
+          "kind": "VPCConnection",
+          "group": "kafka.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.authentication",
+              "type": "string"
+            },
+            {
+              "path": "spec.clientSubnetRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.clientSubnetRefs[].from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.clientSubnets[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.securityGroupRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.securityGroupRefs[].from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.securityGroups[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
+            },
+            {
+              "path": "spec.targetClusterARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.targetClusterRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.targetClusterRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.vpcID",
+              "type": "string"
+            },
+            {
+              "path": "spec.vpcRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.vpcRef.from.namespace",
+              "type": "string"
+            }
+          ]
         }
       ]
     },
     {
       "name": "keyspaces",
       "repo": "aws-controllers-k8s/keyspaces-controller",
-      "release": "v1.3.0",
+      "release": "v1.5.1",
       "fullName": "Amazon Keyspaces",
       "kinds": [
         {
@@ -16076,6 +17810,14 @@
               "type": "string"
             },
             {
+              "path": "spec.encryptionSpecification.kmsKeyIdentifierRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionSpecification.kmsKeyIdentifierRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.encryptionSpecification.type_",
               "type": "string"
             },
@@ -16134,7 +17876,7 @@
     {
       "name": "kinesis",
       "repo": "aws-controllers-k8s/kinesis-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "Amazon Kinesis",
       "kinds": [
         {
@@ -16167,7 +17909,7 @@
     {
       "name": "kms",
       "repo": "aws-controllers-k8s/kms-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "AWS Key Management Service",
       "kinds": [
         {
@@ -16302,7 +18044,7 @@
     {
       "name": "lambda",
       "repo": "aws-controllers-k8s/lambda-controller",
-      "release": "v1.13.0",
+      "release": "v1.16.0",
       "fullName": "AWS Lambda",
       "kinds": [
         {
@@ -16354,6 +18096,14 @@
             },
             {
               "path": "spec.functionVersion",
+              "type": "string"
+            },
+            {
+              "path": "spec.functionVersionRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.functionVersionRef.from.namespace",
               "type": "string"
             },
             {
@@ -16432,6 +18182,10 @@
             {
               "path": "spec.description",
               "type": "string"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
             }
           ]
         },
@@ -16527,6 +18281,10 @@
               "type": "string"
             },
             {
+              "path": "spec.loggingConfig.systemLogLevel",
+              "type": "string"
+            },
+            {
               "path": "spec.maximumBatchingWindowInSeconds",
               "type": "integer"
             },
@@ -16611,6 +18369,10 @@
               "type": "string"
             },
             {
+              "path": "spec.tags",
+              "type": "map"
+            },
+            {
               "path": "spec.topics[]",
               "type": "string"
             },
@@ -16665,6 +18427,14 @@
             },
             {
               "path": "spec.codeSigningConfigARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.codeSigningConfigRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.codeSigningConfigRef.from.namespace",
               "type": "string"
             },
             {
@@ -16749,6 +18519,14 @@
             },
             {
               "path": "spec.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.layerRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.layerRefs[].from.namespace",
               "type": "string"
             },
             {
@@ -16903,6 +18681,14 @@
             {
               "path": "spec.qualifier",
               "type": "string"
+            },
+            {
+              "path": "spec.qualifierRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.qualifierRef.from.namespace",
+              "type": "string"
             }
           ]
         },
@@ -16923,6 +18709,14 @@
             },
             {
               "path": "spec.content.s3Bucket",
+              "type": "string"
+            },
+            {
+              "path": "spec.content.s3BucketRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.content.s3BucketRef.from.namespace",
               "type": "string"
             },
             {
@@ -17023,9 +18817,238 @@
       ]
     },
     {
+      "name": "lambdacore",
+      "repo": "aws-controllers-k8s/lambdacore-controller",
+      "release": "",
+      "fullName": "AWS Lambda Core",
+      "kinds": []
+    },
+    {
+      "name": "lambdamicrovms",
+      "repo": "aws-controllers-k8s/lambdamicrovms-controller",
+      "release": "v0.2.1",
+      "fullName": "AWS Lambda MicroVMs",
+      "kinds": [
+        {
+          "kind": "Microvm",
+          "group": "lambdamicrovms.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.egressNetworkConnectors[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.executionRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.executionRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.executionRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.idlePolicy.autoResumeEnabled",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.idlePolicy.maxIdleDurationSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.idlePolicy.suspendedDurationSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.imageIdentifier",
+              "type": "string"
+            },
+            {
+              "path": "spec.imageIdentifierRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.imageIdentifierRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.imageVersion",
+              "type": "string"
+            },
+            {
+              "path": "spec.ingressNetworkConnectors[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.logging.cloudWatch.logGroup",
+              "type": "string"
+            },
+            {
+              "path": "spec.logging.cloudWatch.logStream",
+              "type": "string"
+            },
+            {
+              "path": "spec.logging.disabled",
+              "type": "map"
+            },
+            {
+              "path": "spec.maximumDurationInSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.runHookPayload.key",
+              "type": "string"
+            },
+            {
+              "path": "spec.runHookPayload.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.runHookPayload.namespace",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "kind": "MicrovmImage",
+          "group": "lambdamicrovms.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.additionalOsCapabilities[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.baseImageARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.baseImageVersion",
+              "type": "string"
+            },
+            {
+              "path": "spec.buildRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.buildRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.buildRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.codeArtifact.uri",
+              "type": "string"
+            },
+            {
+              "path": "spec.cpuConfigurations[].architecture",
+              "type": "string"
+            },
+            {
+              "path": "spec.description",
+              "type": "string"
+            },
+            {
+              "path": "spec.egressNetworkConnectors[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.environmentVariables",
+              "type": "map"
+            },
+            {
+              "path": "spec.hooks.microvmHooks.resume",
+              "type": "string"
+            },
+            {
+              "path": "spec.hooks.microvmHooks.resumeTimeoutInSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.hooks.microvmHooks.run",
+              "type": "string"
+            },
+            {
+              "path": "spec.hooks.microvmHooks.runTimeoutInSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.hooks.microvmHooks.suspend",
+              "type": "string"
+            },
+            {
+              "path": "spec.hooks.microvmHooks.suspendTimeoutInSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.hooks.microvmHooks.terminate",
+              "type": "string"
+            },
+            {
+              "path": "spec.hooks.microvmHooks.terminateTimeoutInSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.hooks.microvmImageHooks.ready",
+              "type": "string"
+            },
+            {
+              "path": "spec.hooks.microvmImageHooks.readyTimeoutInSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.hooks.microvmImageHooks.validate",
+              "type": "string"
+            },
+            {
+              "path": "spec.hooks.microvmImageHooks.validateTimeoutInSeconds",
+              "type": "integer"
+            },
+            {
+              "path": "spec.hooks.port",
+              "type": "integer"
+            },
+            {
+              "path": "spec.logging.cloudWatch.logGroup",
+              "type": "string"
+            },
+            {
+              "path": "spec.logging.cloudWatch.logStream",
+              "type": "string"
+            },
+            {
+              "path": "spec.logging.disabled",
+              "type": "map"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.resources[].minimumMemoryInMiB",
+              "type": "integer"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "memorydb",
       "repo": "aws-controllers-k8s/memorydb-controller",
-      "release": "v1.3.0",
+      "release": "v1.6.0",
       "fullName": "Amazon MemoryDB for Redis",
       "kinds": [
         {
@@ -17094,6 +19117,14 @@
             },
             {
               "path": "spec.kmsKeyID",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.kmsKeyRef.from.namespace",
               "type": "string"
             },
             {
@@ -17283,6 +19314,14 @@
               "type": "string"
             },
             {
+              "path": "spec.sourceSnapshotRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.sourceSnapshotRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.tags[].key",
               "type": "string"
             },
@@ -17375,7 +19414,7 @@
     {
       "name": "mq",
       "repo": "aws-controllers-k8s/mq-controller",
-      "release": "v1.3.0",
+      "release": "v1.5.1",
       "fullName": "Amazon MQ",
       "kinds": [
         {
@@ -17411,6 +19450,14 @@
             },
             {
               "path": "spec.encryptionOptions.kmsKeyID",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionOptions.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionOptions.kmsKeyRef.from.namespace",
               "type": "string"
             },
             {
@@ -17564,7 +19611,7 @@
     {
       "name": "mwaa",
       "repo": "aws-controllers-k8s/mwaa-controller",
-      "release": "v0.2.0",
+      "release": "v1.1.1",
       "fullName": "Amazon Managed Workflows for Apache Airflow",
       "kinds": [
         {
@@ -17762,12 +19809,13 @@
       "name": "mwaaserverless",
       "repo": "aws-controllers-k8s/mwaaserverless-controller",
       "release": "",
+      "fullName": "Amazon Managed Workflows for Apache Airflow Serverless",
       "kinds": []
     },
     {
       "name": "networkfirewall",
       "repo": "aws-controllers-k8s/networkfirewall-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "Network Firewall",
       "kinds": [
         {
@@ -18147,7 +20195,7 @@
     {
       "name": "opensearchserverless",
       "repo": "aws-controllers-k8s/opensearchserverless-controller",
-      "release": "v0.4.0",
+      "release": "v1.1.1",
       "fullName": "Amazon OpenSearch Serverless",
       "kinds": [
         {
@@ -18213,7 +20261,7 @@
     {
       "name": "opensearchservice",
       "repo": "aws-controllers-k8s/opensearchservice-controller",
-      "release": "v1.4.0",
+      "release": "v1.5.1",
       "fullName": "Amazon OpenSearch Service",
       "kinds": [
         {
@@ -18520,13 +20568,58 @@
               "type": "string"
             }
           ]
+        },
+        {
+          "kind": "VPCEndpoint",
+          "group": "opensearchservice.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.domainARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.domainRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.domainRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.vpcOptions.securityGroupIDs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.vpcOptions.securityGroupRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.vpcOptions.securityGroupRefs[].from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.vpcOptions.subnetIDs[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.vpcOptions.subnetRefs[].from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.vpcOptions.subnetRefs[].from.namespace",
+              "type": "string"
+            }
+          ]
         }
       ]
     },
     {
       "name": "organizations",
       "repo": "aws-controllers-k8s/organizations-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "AWS Organizations",
       "kinds": [
         {
@@ -18592,7 +20685,7 @@
     {
       "name": "pipes",
       "repo": "aws-controllers-k8s/pipes-controller",
-      "release": "v1.3.0",
+      "release": "v1.5.0",
       "fullName": "Amazon EventBridge Pipes",
       "kinds": [
         {
@@ -18636,6 +20729,14 @@
             },
             {
               "path": "spec.roleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.namespace",
               "type": "string"
             },
             {
@@ -19157,7 +21258,7 @@
     {
       "name": "prometheusservice",
       "repo": "aws-controllers-k8s/prometheusservice-controller",
-      "release": "v1.5.0",
+      "release": "v1.6.1",
       "fullName": "Amazon Managed Service for Prometheus",
       "kinds": [
         {
@@ -19265,7 +21366,7 @@
     {
       "name": "quicksight",
       "repo": "aws-controllers-k8s/quicksight-controller",
-      "release": "v0.4.0",
+      "release": "v1.1.1",
       "fullName": "Amazon Quick Sight",
       "kinds": [
         {
@@ -20765,7 +22866,7 @@
     {
       "name": "ram",
       "repo": "aws-controllers-k8s/ram-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "Resource Access Manager",
       "kinds": [
         {
@@ -20851,7 +22952,7 @@
     {
       "name": "rds",
       "repo": "aws-controllers-k8s/rds-controller",
-      "release": "v1.9.3",
+      "release": "v1.11.1",
       "fullName": "Amazon Relational Database Service",
       "kinds": [
         {
@@ -21042,6 +23143,14 @@
               "type": "string"
             },
             {
+              "path": "spec.monitoringRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.monitoringRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.networkType",
               "type": "string"
             },
@@ -21051,6 +23160,14 @@
             },
             {
               "path": "spec.performanceInsightsKMSKeyID",
+              "type": "string"
+            },
+            {
+              "path": "spec.performanceInsightsKMSKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.performanceInsightsKMSKeyRef.from.namespace",
               "type": "string"
             },
             {
@@ -21522,6 +23639,14 @@
               "type": "string"
             },
             {
+              "path": "spec.monitoringRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.monitoringRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.multiAZ",
               "type": "boolean"
             },
@@ -21543,6 +23668,14 @@
             },
             {
               "path": "spec.performanceInsightsKMSKeyID",
+              "type": "string"
+            },
+            {
+              "path": "spec.performanceInsightsKMSKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.performanceInsightsKMSKeyRef.from.namespace",
               "type": "string"
             },
             {
@@ -21732,6 +23865,14 @@
               "type": "string"
             },
             {
+              "path": "spec.roleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.tags[].key",
               "type": "string"
             },
@@ -21869,7 +24010,7 @@
     {
       "name": "recyclebin",
       "repo": "aws-controllers-k8s/recyclebin-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "Amazon EBS Recycle Bin",
       "kinds": [
         {
@@ -21932,7 +24073,7 @@
     {
       "name": "route53",
       "repo": "aws-controllers-k8s/route53-controller",
-      "release": "v1.4.2",
+      "release": "v1.5.2",
       "fullName": "Amazon Route53",
       "kinds": [
         {
@@ -22183,7 +24324,7 @@
     {
       "name": "route53resolver",
       "repo": "aws-controllers-k8s/route53resolver-controller",
-      "release": "v1.6.0",
+      "release": "v1.8.1",
       "fullName": "Amazon Route53 Resolver",
       "kinds": [
         {
@@ -22349,6 +24490,14 @@
               "type": "string"
             },
             {
+              "path": "spec.resolverEndpointRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.resolverEndpointRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.ruleType",
               "type": "string"
             },
@@ -22416,7 +24565,7 @@
     {
       "name": "s3",
       "repo": "aws-controllers-k8s/s3-controller",
-      "release": "v1.6.0",
+      "release": "v1.10.0",
       "fullName": "Amazon Simple Storage Service",
       "kinds": [
         {
@@ -22426,6 +24575,10 @@
             "v1alpha1"
           ],
           "fields": [
+            {
+              "path": "spec.abac.status",
+              "type": "string"
+            },
             {
               "path": "spec.accelerate.status",
               "type": "string"
@@ -22879,6 +25032,18 @@
               "type": "string"
             },
             {
+              "path": "spec.objectLockConfiguration.rule.defaultRetention.days",
+              "type": "integer"
+            },
+            {
+              "path": "spec.objectLockConfiguration.rule.defaultRetention.mode",
+              "type": "string"
+            },
+            {
+              "path": "spec.objectLockConfiguration.rule.defaultRetention.years",
+              "type": "integer"
+            },
+            {
               "path": "spec.objectLockEnabledForBucket",
               "type": "boolean"
             },
@@ -22912,6 +25077,14 @@
             },
             {
               "path": "spec.replication.role",
+              "type": "string"
+            },
+            {
+              "path": "spec.replication.roleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.replication.roleRef.from.namespace",
               "type": "string"
             },
             {
@@ -23073,7 +25246,7 @@
     {
       "name": "s3control",
       "repo": "aws-controllers-k8s/s3control-controller",
-      "release": "v1.3.0",
+      "release": "v1.5.1",
       "fullName": "AWS S3 Control",
       "kinds": [
         {
@@ -23097,6 +25270,10 @@
             },
             {
               "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.policy",
               "type": "string"
             },
             {
@@ -23126,7 +25303,7 @@
     {
       "name": "s3files",
       "repo": "aws-controllers-k8s/s3files-controller",
-      "release": "v0.2.0",
+      "release": "v1.1.1",
       "fullName": "Amazon S3 Files",
       "kinds": [
         {
@@ -23329,7 +25506,7 @@
     {
       "name": "s3tables",
       "repo": "aws-controllers-k8s/s3tables-controller",
-      "release": "",
+      "release": "v1.1.1",
       "fullName": "Amazon S3 Tables",
       "kinds": [
         {
@@ -23358,6 +25535,135 @@
           ]
         },
         {
+          "kind": "Table",
+          "group": "s3tables.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.sseAlgorithm",
+              "type": "string"
+            },
+            {
+              "path": "spec.format",
+              "type": "string"
+            },
+            {
+              "path": "spec.metadata.iceberg.partitionSpec.fields[].fieldID",
+              "type": "integer"
+            },
+            {
+              "path": "spec.metadata.iceberg.partitionSpec.fields[].name",
+              "type": "string"
+            },
+            {
+              "path": "spec.metadata.iceberg.partitionSpec.fields[].sourceID",
+              "type": "integer"
+            },
+            {
+              "path": "spec.metadata.iceberg.partitionSpec.fields[].transform",
+              "type": "string"
+            },
+            {
+              "path": "spec.metadata.iceberg.partitionSpec.specID",
+              "type": "integer"
+            },
+            {
+              "path": "spec.metadata.iceberg.properties",
+              "type": "map"
+            },
+            {
+              "path": "spec.metadata.iceberg.schema.fields[].id",
+              "type": "integer"
+            },
+            {
+              "path": "spec.metadata.iceberg.schema.fields[].name",
+              "type": "string"
+            },
+            {
+              "path": "spec.metadata.iceberg.schema.fields[].required",
+              "type": "boolean"
+            },
+            {
+              "path": "spec.metadata.iceberg.schema.fields[].type",
+              "type": "string"
+            },
+            {
+              "path": "spec.metadata.iceberg.writeOrder.fields[].direction",
+              "type": "string"
+            },
+            {
+              "path": "spec.metadata.iceberg.writeOrder.fields[].nullOrder",
+              "type": "string"
+            },
+            {
+              "path": "spec.metadata.iceberg.writeOrder.fields[].sourceID",
+              "type": "integer"
+            },
+            {
+              "path": "spec.metadata.iceberg.writeOrder.fields[].transform",
+              "type": "string"
+            },
+            {
+              "path": "spec.metadata.iceberg.writeOrder.orderID",
+              "type": "integer"
+            },
+            {
+              "path": "spec.metadataLocation",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.namespaceRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.namespaceRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.storageClassConfiguration.storageClass",
+              "type": "string"
+            },
+            {
+              "path": "spec.tableBucketARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.tableBucketRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tableBucketRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
+            }
+          ]
+        },
+        {
           "kind": "TableBucket",
           "group": "s3tables.services.k8s.aws",
           "versions": [
@@ -23381,7 +25687,15 @@
               "type": "string"
             },
             {
+              "path": "spec.maintenanceConfiguration",
+              "type": "map"
+            },
+            {
               "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.policy",
               "type": "string"
             },
             {
@@ -23399,14 +25713,109 @@
     {
       "name": "s3vectors",
       "repo": "aws-controllers-k8s/s3vectors-controller",
-      "release": "",
+      "release": "v1.1.1",
       "fullName": "Amazon S3 Vectors",
-      "kinds": []
+      "kinds": [
+        {
+          "kind": "Index",
+          "group": "s3vectors.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.dataType",
+              "type": "string"
+            },
+            {
+              "path": "spec.dimension",
+              "type": "integer"
+            },
+            {
+              "path": "spec.distanceMetric",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.sseType",
+              "type": "string"
+            },
+            {
+              "path": "spec.metadataConfiguration.nonFilterableMetadataKeys[]",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
+            },
+            {
+              "path": "spec.vectorBucketName",
+              "type": "string"
+            },
+            {
+              "path": "spec.vectorBucketRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.vectorBucketRef.from.namespace",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "kind": "VectorBucket",
+          "group": "s3vectors.services.k8s.aws",
+          "versions": [
+            "v1alpha1"
+          ],
+          "fields": [
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.kmsKeyRef.from.namespace",
+              "type": "string"
+            },
+            {
+              "path": "spec.encryptionConfiguration.sseType",
+              "type": "string"
+            },
+            {
+              "path": "spec.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.tags",
+              "type": "map"
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "sagemaker",
       "repo": "aws-controllers-k8s/sagemaker-controller",
-      "release": "v1.8.0",
+      "release": "v1.9.1",
       "fullName": "Amazon SageMaker",
       "kinds": [
         {
@@ -28068,7 +30477,7 @@
     {
       "name": "secretsmanager",
       "repo": "aws-controllers-k8s/secretsmanager-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "AWS Secrets Manager",
       "kinds": [
         {
@@ -28143,7 +30552,7 @@
     {
       "name": "ses",
       "repo": "aws-controllers-k8s/ses-controller",
-      "release": "v1.3.0",
+      "release": "v1.4.1",
       "fullName": "Simple Email Service",
       "kinds": [
         {
@@ -28164,7 +30573,7 @@
     {
       "name": "sfn",
       "repo": "aws-controllers-k8s/sfn-controller",
-      "release": "v1.4.0",
+      "release": "v1.5.1",
       "fullName": "AWS Step Functions",
       "kinds": [
         {
@@ -28220,6 +30629,14 @@
               "type": "string"
             },
             {
+              "path": "spec.roleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.roleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.tags[].key",
               "type": "string"
             },
@@ -28267,7 +30684,7 @@
     {
       "name": "sns",
       "repo": "aws-controllers-k8s/sns-controller",
-      "release": "v1.5.1",
+      "release": "v1.9.1",
       "fullName": "Amazon Simple Notification Service",
       "kinds": [
         {
@@ -28279,6 +30696,14 @@
           "fields": [
             {
               "path": "spec.eventDeliveryFailure",
+              "type": "string"
+            },
+            {
+              "path": "spec.eventDeliveryFailureRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.eventDeliveryFailureRef.from.namespace",
               "type": "string"
             },
             {
@@ -28383,6 +30808,14 @@
               "type": "string"
             },
             {
+              "path": "spec.platformApplicationRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.platformApplicationRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.token",
               "type": "string"
             }
@@ -28428,6 +30861,14 @@
               "type": "string"
             },
             {
+              "path": "spec.subscriptionRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.subscriptionRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.topicARN",
               "type": "string"
             },
@@ -28453,7 +30894,23 @@
               "type": "string"
             },
             {
+              "path": "spec.applicationFailureFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.applicationFailureFeedbackRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.applicationSuccessFeedbackRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.applicationSuccessFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.applicationSuccessFeedbackRoleRef.from.namespace",
               "type": "string"
             },
             {
@@ -28489,7 +30946,23 @@
               "type": "string"
             },
             {
+              "path": "spec.firehoseFailureFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.firehoseFailureFeedbackRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.firehoseSuccessFeedbackRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.firehoseSuccessFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.firehoseSuccessFeedbackRoleRef.from.namespace",
               "type": "string"
             },
             {
@@ -28501,7 +30974,23 @@
               "type": "string"
             },
             {
+              "path": "spec.httpFailureFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.httpFailureFeedbackRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.httpSuccessFeedbackRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.httpSuccessFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.httpSuccessFeedbackRoleRef.from.namespace",
               "type": "string"
             },
             {
@@ -28525,7 +31014,23 @@
               "type": "string"
             },
             {
+              "path": "spec.lambdaFailureFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.lambdaFailureFeedbackRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.lambdaSuccessFeedbackRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.lambdaSuccessFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.lambdaSuccessFeedbackRoleRef.from.namespace",
               "type": "string"
             },
             {
@@ -28557,7 +31062,23 @@
               "type": "string"
             },
             {
+              "path": "spec.sqsFailureFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.sqsFailureFeedbackRoleRef.from.namespace",
+              "type": "string"
+            },
+            {
               "path": "spec.sqsSuccessFeedbackRoleARN",
+              "type": "string"
+            },
+            {
+              "path": "spec.sqsSuccessFeedbackRoleRef.from.name",
+              "type": "string"
+            },
+            {
+              "path": "spec.sqsSuccessFeedbackRoleRef.from.namespace",
               "type": "string"
             },
             {
@@ -28583,7 +31104,7 @@
     {
       "name": "sqs",
       "repo": "aws-controllers-k8s/sqs-controller",
-      "release": "v1.5.2",
+      "release": "v1.6.1",
       "fullName": "Amazon Simple Queue Service",
       "kinds": [
         {
@@ -28684,7 +31205,7 @@
     {
       "name": "ssm",
       "repo": "aws-controllers-k8s/ssm-controller",
-      "release": "v1.4.1",
+      "release": "v1.5.1",
       "fullName": "Systems Manager",
       "kinds": [
         {
@@ -29000,7 +31521,7 @@
     {
       "name": "wafv2",
       "repo": "aws-controllers-k8s/wafv2-controller",
-      "release": "v1.4.1",
+      "release": "v1.5.1",
       "fullName": "AWS Web Application Firewall",
       "kinds": [
         {
